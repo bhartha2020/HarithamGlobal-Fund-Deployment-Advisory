@@ -1,0 +1,1038 @@
+{
+  "agent_name": "Buddhiman",
+  "role": "Chief Investment Strategist & Final Portfolio Allocator",
+  "timestamp": "2026-10-08 18:08:37",
+  "dates": {
+    "current_date": "Thursday, 08 October 2026",
+    "friday_recommendation_date": "Friday, 09 October 2026",
+    "upcoming_monday_action_date": "Monday, 12 October 2026"
+  },
+  "regime": "Prudent Value Accumulation (Counter-Cyclical)",
+  "allocation_percentages": {
+    "Stocks": 35,
+    "Mutual_Funds": 35,
+    "ETFs": 15,
+    "Fixed_Deposits": 15
+  },
+  "five_actionable_picks": [
+    {
+      "type": "Stock (Equity)",
+      "symbol": "ITC.NS",
+      "name": "ITC Ltd",
+      "sector": "FMCG & Conglomerate",
+      "entry_price_ref": "Rs. 255.00",
+      "target_horizon": "1 - 6 Months",
+      "risk_profile": "High / Equity",
+      "recommended_weight_pct": 20,
+      "key_driver": "Jasoos Score 60.9/100 with 3 big-ticket deals/capex events and 2.83x NSE institutional volume ratio.",
+      "action": "Buy on Monday Market Open / Staggered"
+    },
+    {
+      "type": "Stock (Equity)",
+      "symbol": "ICICIBANK.NS",
+      "name": "ICICI Bank",
+      "sector": "Banking & Financials",
+      "entry_price_ref": "Rs. 1,349.00",
+      "target_horizon": "1 - 6 Months",
+      "risk_profile": "High / Equity",
+      "recommended_weight_pct": 20,
+      "key_driver": "Jasoos Score 51.7/100 with 0 big-ticket deals/capex events and 1.18x NSE institutional volume ratio.",
+      "action": "Buy on Monday Market Open / Staggered"
+    },
+    {
+      "type": "Mutual Fund (Hybrid)",
+      "symbol": "JBR_HY_01",
+      "name": "JioBlackRock Dynamic Multi-Asset Dynamic Fund",
+      "sector": "JioBlackRock AMC (Hybrid)",
+      "entry_price_ref": "NAV Rs. 11.20",
+      "target_horizon": "6 - 36 Months",
+      "risk_profile": "Moderate High",
+      "recommended_weight_pct": 20,
+      "key_driver": "SafetyPriya top selection: +1.3% 15-day return and +0.48% 1-week return with superior AMC pedigree.",
+      "action": "Deploy Lump Sum / Start Weekly SIP on Monday"
+    },
+    {
+      "type": "Mutual Fund (Equity)",
+      "symbol": "JBR_EQ_01",
+      "name": "JioBlackRock Digital India Growth & Core Equity Proxy",
+      "sector": "JioBlackRock AMC (Equity)",
+      "entry_price_ref": "NAV Rs. 12.45",
+      "target_horizon": "6 - 36 Months",
+      "risk_profile": "Very High",
+      "recommended_weight_pct": 20,
+      "key_driver": "SafetyPriya top selection: +2.25% 15-day return and +0.9% 1-week return with superior AMC pedigree.",
+      "action": "Deploy Lump Sum / Start Weekly SIP on Monday"
+    },
+    {
+      "type": "Fixed Deposit (Guaranteed)",
+      "symbol": "BANK_FD",
+      "name": "Bajaj Finance Fixed Deposit (AAA) Fixed Deposit",
+      "sector": "Banking & Safe Yield",
+      "entry_price_ref": "8.1% p.a. (8.35% for Seniors)",
+      "target_horizon": "24 - 36 Months",
+      "risk_profile": "Zero Capital Risk (DICGC / AAA)",
+      "recommended_weight_pct": 20,
+      "key_driver": "SafetyPriya benchmark: Capital lock with assured 8.1% p.a. yield to hedge portfolio against unexpected macro drawdown.",
+      "action": "Book Term Deposit on Monday via NetBanking"
+    }
+  ],
+  "executive_summary": "Buddhiman Grand Verdict: Market is positioned in a 'Prudent Value Accumulation (Counter-Cyclical)' phase. FII/DII GrihaLaxmi rule signaled BUY (Flow below 15-DMA). Explorer reports global cues as 'Strongly Bearish' (-73.4/100). Recommended deployment for fresh funds: 35% in Stocks, 35% in Mutual Funds, 15% in ETFs, and 15% in Fixed Deposits. Below are the 5 definitive instrument recommendations formulated this Friday for Monday action.",
+  "agent_audit_trail": {
+    "jasoos": {
+      "summary": "Jasoos examined all 15 big-ticket Indian stocks across Financial Times, Economic Times, Business Standard, CNBC-TV18, and NDTV Profit, cross-verified with daily NSE/BSE price-volume data. Top big-ticket institutional momentum identified in: ITC Ltd, ICICI Bank, Adani Enterprises.",
+      "top_stock": "ITC Ltd",
+      "sources_checked": [
+        "Financial Times (FT)",
+        "The Economic Times (ET)",
+        "Business Standard",
+        "CNBC-TV18",
+        "NDTV Profit",
+        "NSE Daily",
+        "BSE Daily"
+      ]
+    },
+    "explorer": {
+      "summary": "Explorer evaluated global cues across US (Dow Jones, NASDAQ) and Asia (Nikkei 225, KOSPI, Singapore STI). Global Composite Score stands at -73.4/100, indicating a 'Strongly Bearish' outlook. Projected impact on Indian Benchmarks: Nifty (-150 to -300 pts), Sensex (-450 to -950 pts).",
+      "global_score": -73.4,
+      "bias": "Strongly Bearish",
+      "nifty_impact": "-150 to -300 pts"
+    },
+    "grihalaxmi": {
+      "summary": "GrihaLaxmi analyzed cumulative institutional capital flows over the prior 15 trading days. 15-Day Cumulative FII: Rs. -35,576.29 Cr, DII: Rs. 42,116.84 Cr, Combined Net Flow: Rs. 6,540.55 Cr. 15-Day Average Daily Flow: Rs. 436.04 Cr. Latest Flow: Rs. -1,524.80 Cr. Condition 'Flow < 15-Day Avg': True. Decision: RECOMMEND INVESTING IN STOCK MARKET (Contrarian Accumulation Zone).",
+      "rule_triggered": true,
+      "cumulative_net": 6540.55,
+      "avg_15d": 436.04
+    },
+    "safetypriya": {
+      "summary": "SafetyPriya screened 20 Mutual Fund options across ICICI Prudential, Kotak Mahindra, Tata, JioBlackRock, and HDFC across Equity, Debt, Hybrid, and Liquid categories. 15-Day and 1-Week NAV movements reviewed. Best performers: Equity (JioBlackRock - 2.25% 15D), Hybrid (JioBlackRock - 1.3% 15D), Debt (ICICI Prudential - 0.38% 15D). Benchmark Bank FD offering 8.1% p.a. provides an anchor for risk-free deployment.",
+      "top_hybrid": "JioBlackRock Dynamic Multi-Asset Dynamic Fund",
+      "top_fd_rate": 8.1
+    }
+  },
+  "full_reports": {
+    "jasoos": {
+      "agent_name": "Jasoos",
+      "role": "Big-Ticket Stock Investigator",
+      "timestamp": "2026-10-08 18:08:32",
+      "total_stocks_analyzed": 15,
+      "summary": "Jasoos examined all 15 big-ticket Indian stocks across Financial Times, Economic Times, Business Standard, CNBC-TV18, and NDTV Profit, cross-verified with daily NSE/BSE price-volume data. Top big-ticket institutional momentum identified in: ITC Ltd, ICICI Bank, Adani Enterprises.",
+      "top_stock_picks": [
+        {
+          "symbol": "ITC.NS",
+          "name": "ITC Ltd",
+          "sector": "FMCG & Conglomerate",
+          "current_price": 255.0,
+          "day_change_pct": -4.03,
+          "week_ret_pct": -0.35,
+          "fifteen_ret_pct": -5.61,
+          "vol_ratio": 2.83,
+          "is_volume_spike": true,
+          "media_sentiment": -0.13,
+          "article_count": 5,
+          "big_ticket_deals_found": 3,
+          "headlines": [
+            "ITC shares slide 3% on block deal buzz; FMCG giant down 29% in 2026",
+            "ITC among 4 F&amp;O stocks with sharp rise in futures open interest",
+            "ITC sees 2.9% of equity change hands in single large trade; stock slumps 3%",
+            "Stock Market Crash LIVE: Sensex Tanks Over 1,200 Points, Nifty 50 Below 22,200; ITC, JSW Steel, IndiGo Among Top Losers"
+          ],
+          "jasoos_score": 60.9,
+          "verdict": "MODERATE INSTITUTIONAL INTEREST"
+        },
+        {
+          "symbol": "ICICIBANK.NS",
+          "name": "ICICI Bank",
+          "sector": "Banking & Financials",
+          "current_price": 1349.0,
+          "day_change_pct": -0.63,
+          "week_ret_pct": 2.93,
+          "fifteen_ret_pct": 0.67,
+          "vol_ratio": 1.18,
+          "is_volume_spike": false,
+          "media_sentiment": 0.0,
+          "article_count": 2,
+          "big_ticket_deals_found": 0,
+          "headlines": [
+            "RBI rate hike done. Now what’s ahead for bank stocks? Jefferies, other brokerages weigh in",
+            "Banks vs NBFCs: Where to invest after RBI rate hike? Analysts answer"
+          ],
+          "jasoos_score": 51.7,
+          "verdict": "NEUTRAL / WATCHLIST"
+        },
+        {
+          "symbol": "ADANIENT.NS",
+          "name": "Adani Enterprises",
+          "sector": "Infrastructure & Conglomerate",
+          "current_price": 2596.0,
+          "day_change_pct": -5.36,
+          "week_ret_pct": -7.84,
+          "fifteen_ret_pct": -13.27,
+          "vol_ratio": 2.75,
+          "is_volume_spike": true,
+          "media_sentiment": 0.17,
+          "article_count": 3,
+          "big_ticket_deals_found": 1,
+          "headlines": [
+            "Adani Group stocks tumble as market rout deepens; Adani Green, Adani Ent, others tank up to 10%",
+            "Adani group stocks under pressure; Enterprises, Green Energy tank up to 7%",
+            "Adani Enterprises Bags CareEdge's AA Rating Upgrade On Stronger Earnings, Balance Sheet"
+          ],
+          "jasoos_score": 49.6,
+          "verdict": "NEUTRAL / WATCHLIST"
+        },
+        {
+          "symbol": "BHARTIARTL.NS",
+          "name": "Bharti Airtel",
+          "sector": "Telecom",
+          "current_price": 1804.6,
+          "day_change_pct": -1.6,
+          "week_ret_pct": 3.65,
+          "fifteen_ret_pct": -1.56,
+          "vol_ratio": 0.96,
+          "is_volume_spike": false,
+          "media_sentiment": 0.0,
+          "article_count": 0,
+          "big_ticket_deals_found": 0,
+          "headlines": [],
+          "jasoos_score": 48.3,
+          "verdict": "NEUTRAL / WATCHLIST"
+        },
+        {
+          "symbol": "TCS.NS",
+          "name": "Tata Consultancy Services",
+          "sector": "IT & Software",
+          "current_price": 2076.0,
+          "day_change_pct": -0.21,
+          "week_ret_pct": 0.05,
+          "fifteen_ret_pct": -0.65,
+          "vol_ratio": 1.36,
+          "is_volume_spike": true,
+          "media_sentiment": 0.64,
+          "article_count": 7,
+          "big_ticket_deals_found": 0,
+          "headlines": [
+            "TCS, Infosys, HCL Tech, other IT stocks jump up to 3% despite weak market sentiment. What to expect as Q2 earnings season begins?",
+            "TCS Q2 Results 2026 Live Updates: 5 key things investors should watch as IT major to announce results soon",
+            "TCS shares jump 3% ahead of Q2 results; what to expect & how to trade?",
+            "Stocks to watch: TCS, Paytm, Tata Power, Ola, Tata Steel, Varun Bev"
+          ],
+          "jasoos_score": 47.6,
+          "verdict": "NEUTRAL / WATCHLIST"
+        }
+      ],
+      "all_15_stocks": [
+        {
+          "symbol": "ITC.NS",
+          "name": "ITC Ltd",
+          "sector": "FMCG & Conglomerate",
+          "current_price": 255.0,
+          "day_change_pct": -4.03,
+          "week_ret_pct": -0.35,
+          "fifteen_ret_pct": -5.61,
+          "vol_ratio": 2.83,
+          "is_volume_spike": true,
+          "media_sentiment": -0.13,
+          "article_count": 5,
+          "big_ticket_deals_found": 3,
+          "headlines": [
+            "ITC shares slide 3% on block deal buzz; FMCG giant down 29% in 2026",
+            "ITC among 4 F&amp;O stocks with sharp rise in futures open interest",
+            "ITC sees 2.9% of equity change hands in single large trade; stock slumps 3%",
+            "Stock Market Crash LIVE: Sensex Tanks Over 1,200 Points, Nifty 50 Below 22,200; ITC, JSW Steel, IndiGo Among Top Losers"
+          ],
+          "jasoos_score": 60.9,
+          "verdict": "MODERATE INSTITUTIONAL INTEREST"
+        },
+        {
+          "symbol": "ICICIBANK.NS",
+          "name": "ICICI Bank",
+          "sector": "Banking & Financials",
+          "current_price": 1349.0,
+          "day_change_pct": -0.63,
+          "week_ret_pct": 2.93,
+          "fifteen_ret_pct": 0.67,
+          "vol_ratio": 1.18,
+          "is_volume_spike": false,
+          "media_sentiment": 0.0,
+          "article_count": 2,
+          "big_ticket_deals_found": 0,
+          "headlines": [
+            "RBI rate hike done. Now what’s ahead for bank stocks? Jefferies, other brokerages weigh in",
+            "Banks vs NBFCs: Where to invest after RBI rate hike? Analysts answer"
+          ],
+          "jasoos_score": 51.7,
+          "verdict": "NEUTRAL / WATCHLIST"
+        },
+        {
+          "symbol": "ADANIENT.NS",
+          "name": "Adani Enterprises",
+          "sector": "Infrastructure & Conglomerate",
+          "current_price": 2596.0,
+          "day_change_pct": -5.36,
+          "week_ret_pct": -7.84,
+          "fifteen_ret_pct": -13.27,
+          "vol_ratio": 2.75,
+          "is_volume_spike": true,
+          "media_sentiment": 0.17,
+          "article_count": 3,
+          "big_ticket_deals_found": 1,
+          "headlines": [
+            "Adani Group stocks tumble as market rout deepens; Adani Green, Adani Ent, others tank up to 10%",
+            "Adani group stocks under pressure; Enterprises, Green Energy tank up to 7%",
+            "Adani Enterprises Bags CareEdge's AA Rating Upgrade On Stronger Earnings, Balance Sheet"
+          ],
+          "jasoos_score": 49.6,
+          "verdict": "NEUTRAL / WATCHLIST"
+        },
+        {
+          "symbol": "BHARTIARTL.NS",
+          "name": "Bharti Airtel",
+          "sector": "Telecom",
+          "current_price": 1804.6,
+          "day_change_pct": -1.6,
+          "week_ret_pct": 3.65,
+          "fifteen_ret_pct": -1.56,
+          "vol_ratio": 0.96,
+          "is_volume_spike": false,
+          "media_sentiment": 0.0,
+          "article_count": 0,
+          "big_ticket_deals_found": 0,
+          "headlines": [],
+          "jasoos_score": 48.3,
+          "verdict": "NEUTRAL / WATCHLIST"
+        },
+        {
+          "symbol": "TCS.NS",
+          "name": "Tata Consultancy Services",
+          "sector": "IT & Software",
+          "current_price": 2076.0,
+          "day_change_pct": -0.21,
+          "week_ret_pct": 0.05,
+          "fifteen_ret_pct": -0.65,
+          "vol_ratio": 1.36,
+          "is_volume_spike": true,
+          "media_sentiment": 0.64,
+          "article_count": 7,
+          "big_ticket_deals_found": 0,
+          "headlines": [
+            "TCS, Infosys, HCL Tech, other IT stocks jump up to 3% despite weak market sentiment. What to expect as Q2 earnings season begins?",
+            "TCS Q2 Results 2026 Live Updates: 5 key things investors should watch as IT major to announce results soon",
+            "TCS shares jump 3% ahead of Q2 results; what to expect & how to trade?",
+            "Stocks to watch: TCS, Paytm, Tata Power, Ola, Tata Steel, Varun Bev"
+          ],
+          "jasoos_score": 47.6,
+          "verdict": "NEUTRAL / WATCHLIST"
+        },
+        {
+          "symbol": "TATAMOTORS.NS",
+          "name": "Tata Motors",
+          "sector": "Automobile & EV",
+          "current_price": 975.6,
+          "day_change_pct": -0.24,
+          "week_ret_pct": -1.2,
+          "fifteen_ret_pct": 1.8,
+          "vol_ratio": 1.15,
+          "is_volume_spike": false,
+          "media_sentiment": 0.0,
+          "article_count": 0,
+          "big_ticket_deals_found": 0,
+          "headlines": [],
+          "jasoos_score": 38.8,
+          "verdict": "LACKING BIG-TICKET MOMENTUM"
+        },
+        {
+          "symbol": "INFY.NS",
+          "name": "Infosys",
+          "sector": "IT & Software",
+          "current_price": 997.0,
+          "day_change_pct": 0.5,
+          "week_ret_pct": -3.67,
+          "fifteen_ret_pct": -2.3,
+          "vol_ratio": 1.46,
+          "is_volume_spike": true,
+          "media_sentiment": 0.5,
+          "article_count": 1,
+          "big_ticket_deals_found": 0,
+          "headlines": [
+            "TCS, Infosys, HCL Tech, other IT stocks jump up to 3% despite weak market sentiment. What to expect as Q2 earnings season begins?"
+          ],
+          "jasoos_score": 36.3,
+          "verdict": "LACKING BIG-TICKET MOMENTUM"
+        },
+        {
+          "symbol": "TITAN.NS",
+          "name": "Titan Company",
+          "sector": "Consumer Discretionary",
+          "current_price": 4359.5,
+          "day_change_pct": -0.4,
+          "week_ret_pct": -3.46,
+          "fifteen_ret_pct": -10.67,
+          "vol_ratio": 1.59,
+          "is_volume_spike": true,
+          "media_sentiment": 0.0,
+          "article_count": 1,
+          "big_ticket_deals_found": 0,
+          "headlines": [
+            "TCS To Titan: Five Frontline Stocks Gaining Ground Despite Brutal Stock Market Crash"
+          ],
+          "jasoos_score": 31.6,
+          "verdict": "LACKING BIG-TICKET MOMENTUM"
+        },
+        {
+          "symbol": "BAJFINANCE.NS",
+          "name": "Bajaj Finance",
+          "sector": "NBFC & Financials",
+          "current_price": 955.95,
+          "day_change_pct": -0.82,
+          "week_ret_pct": 0.81,
+          "fifteen_ret_pct": -8.36,
+          "vol_ratio": 1.27,
+          "is_volume_spike": true,
+          "media_sentiment": 0.0,
+          "article_count": 0,
+          "big_ticket_deals_found": 0,
+          "headlines": [],
+          "jasoos_score": 27.7,
+          "verdict": "LACKING BIG-TICKET MOMENTUM"
+        },
+        {
+          "symbol": "LT.NS",
+          "name": "Larsen & Toubro",
+          "sector": "Capital Goods & Infrastructure",
+          "current_price": 3625.1,
+          "day_change_pct": -2.06,
+          "week_ret_pct": -1.85,
+          "fifteen_ret_pct": -7.76,
+          "vol_ratio": 1.06,
+          "is_volume_spike": false,
+          "media_sentiment": 0.0,
+          "article_count": 0,
+          "big_ticket_deals_found": 0,
+          "headlines": [],
+          "jasoos_score": 25.2,
+          "verdict": "LACKING BIG-TICKET MOMENTUM"
+        },
+        {
+          "symbol": "RELIANCE.NS",
+          "name": "Reliance Industries",
+          "sector": "Energy & Conglomerate",
+          "current_price": 1178.0,
+          "day_change_pct": -2.46,
+          "week_ret_pct": 0.88,
+          "fifteen_ret_pct": -5.61,
+          "vol_ratio": 1.04,
+          "is_volume_spike": false,
+          "media_sentiment": 0.0,
+          "article_count": 2,
+          "big_ticket_deals_found": 0,
+          "headlines": [
+            "Reliance could be a cheaper way to own Jio after telecom unit's listing",
+            "iPhone 17, 17 Pro Deals: Amazon vs Flipkart vs Reliance Digital - Who Is Offering Biggest Discount?"
+          ],
+          "jasoos_score": 25.0,
+          "verdict": "LACKING BIG-TICKET MOMENTUM"
+        },
+        {
+          "symbol": "MARUTI.NS",
+          "name": "Maruti Suzuki",
+          "sector": "Automobile",
+          "current_price": 11228.0,
+          "day_change_pct": -1.94,
+          "week_ret_pct": -1.39,
+          "fifteen_ret_pct": -8.19,
+          "vol_ratio": 1.02,
+          "is_volume_spike": false,
+          "media_sentiment": 0.0,
+          "article_count": 0,
+          "big_ticket_deals_found": 0,
+          "headlines": [],
+          "jasoos_score": 24.7,
+          "verdict": "LACKING BIG-TICKET MOMENTUM"
+        },
+        {
+          "symbol": "SUNPHARMA.NS",
+          "name": "Sun Pharmaceutical",
+          "sector": "Pharmaceuticals",
+          "current_price": 1759.8,
+          "day_change_pct": -1.19,
+          "week_ret_pct": -2.29,
+          "fifteen_ret_pct": -5.64,
+          "vol_ratio": 1.0,
+          "is_volume_spike": false,
+          "media_sentiment": 0.0,
+          "article_count": 0,
+          "big_ticket_deals_found": 0,
+          "headlines": [],
+          "jasoos_score": 24.5,
+          "verdict": "LACKING BIG-TICKET MOMENTUM"
+        },
+        {
+          "symbol": "SBIN.NS",
+          "name": "State Bank of India",
+          "sector": "Public Sector Banking",
+          "current_price": 940.0,
+          "day_change_pct": -1.47,
+          "week_ret_pct": -1.48,
+          "fifteen_ret_pct": -5.44,
+          "vol_ratio": 0.9,
+          "is_volume_spike": false,
+          "media_sentiment": 0.0,
+          "article_count": 1,
+          "big_ticket_deals_found": 0,
+          "headlines": [
+            "Banks vs NBFCs: Where to invest after RBI rate hike? Analysts answer"
+          ],
+          "jasoos_score": 23.3,
+          "verdict": "LACKING BIG-TICKET MOMENTUM"
+        },
+        {
+          "symbol": "HDFCBANK.NS",
+          "name": "HDFC Bank",
+          "sector": "Banking & Financials",
+          "current_price": 692.25,
+          "day_change_pct": -1.49,
+          "week_ret_pct": -4.01,
+          "fifteen_ret_pct": -6.1,
+          "vol_ratio": 0.85,
+          "is_volume_spike": false,
+          "media_sentiment": 0.0,
+          "article_count": 0,
+          "big_ticket_deals_found": 0,
+          "headlines": [],
+          "jasoos_score": 22.7,
+          "verdict": "LACKING BIG-TICKET MOMENTUM"
+        }
+      ],
+      "sources_scanned": [
+        "Financial Times (FT)",
+        "The Economic Times (ET)",
+        "Business Standard",
+        "CNBC-TV18",
+        "NDTV Profit",
+        "NSE Daily",
+        "BSE Daily"
+      ]
+    },
+    "explorer": {
+      "agent_name": "Explorer",
+      "role": "Global Macro & Benchmark Trend Evaluator",
+      "timestamp": "2026-10-08 18:08:32",
+      "global_composite_score": -73.4,
+      "directional_bias": "Strongly Bearish",
+      "nifty_projection": {
+        "current": 22231.8,
+        "expected_bias": "-150 to -300 pts"
+      },
+      "sensex_projection": {
+        "current": 71414.98,
+        "expected_bias": "-450 to -950 pts"
+      },
+      "recommendation_note": "Global Risk-off sentiment. Prioritize defensive assets, Debt/Liquid MFs, and FDs.",
+      "tracked_markets": [
+        {
+          "key": "DOW_JONES",
+          "symbol": "^DJI",
+          "name": "Dow Jones Industrial Average",
+          "country": "USA",
+          "weight": 0.25,
+          "price": 51179.87,
+          "day_change_pct": -0.66,
+          "week_ret_pct": 0.5,
+          "signal": "BEARISH"
+        },
+        {
+          "key": "NASDAQ",
+          "symbol": "^IXIC",
+          "name": "NASDAQ Composite",
+          "country": "USA",
+          "weight": 0.25,
+          "price": 27538.69,
+          "day_change_pct": -0.22,
+          "week_ret_pct": 2.48,
+          "signal": "NEUTRAL"
+        },
+        {
+          "key": "NIKKEI_225",
+          "symbol": "^N225",
+          "name": "Nikkei 225",
+          "country": "Japan",
+          "weight": 0.15,
+          "price": 69042.11,
+          "day_change_pct": -1.42,
+          "week_ret_pct": 1.07,
+          "signal": "BEARISH"
+        },
+        {
+          "key": "KOSPI",
+          "symbol": "^KS11",
+          "name": "KOSPI Composite",
+          "country": "South Korea",
+          "weight": 0.15,
+          "price": 6625.93,
+          "day_change_pct": -2.62,
+          "week_ret_pct": -4.95,
+          "signal": "BEARISH"
+        },
+        {
+          "key": "SINGAPORE_STI",
+          "symbol": "^STI",
+          "name": "Straits Times Index (STI)",
+          "country": "Singapore",
+          "weight": 0.2,
+          "price": 5412.96,
+          "day_change_pct": -3.49,
+          "week_ret_pct": -3.94,
+          "signal": "BEARISH"
+        }
+      ],
+      "summary": "Explorer evaluated global cues across US (Dow Jones, NASDAQ) and Asia (Nikkei 225, KOSPI, Singapore STI). Global Composite Score stands at -73.4/100, indicating a 'Strongly Bearish' outlook. Projected impact on Indian Benchmarks: Nifty (-150 to -300 pts), Sensex (-450 to -950 pts)."
+    },
+    "grihalaxmi": {
+      "agent_name": "GrihaLaxmi",
+      "role": "Institutional Flow & Capital Allocation Sentinel",
+      "timestamp": "2026-10-08 18:08:33",
+      "window_days": 15,
+      "start_date": "2026-09-17",
+      "end_date": "07-Oct-2026",
+      "cumulative_fii_cr": -35576.29,
+      "cumulative_dii_cr": 42116.84,
+      "cumulative_net_cr": 6540.55,
+      "fifteen_day_avg_cr": 436.04,
+      "latest_flow_cr": -1524.8,
+      "is_below_15_day_avg": true,
+      "recommend_stock_market": true,
+      "status_tag": "BUY_SIGNAL",
+      "confidence": "HIGH",
+      "rationale": "GrihaLaxmi Alert Triggered: Latest net institutional fund flow (Rs. -1,524.80 Cr) has fallen BELOW the 15-day moving average (Rs. 436.04 Cr). Historical patterns show institutional exhaustion at these levels creates a primed dip-buying / accumulation opportunity for fresh capital deployment before the next liquidity expansion.",
+      "summary": "GrihaLaxmi analyzed cumulative institutional capital flows over the prior 15 trading days. 15-Day Cumulative FII: Rs. -35,576.29 Cr, DII: Rs. 42,116.84 Cr, Combined Net Flow: Rs. 6,540.55 Cr. 15-Day Average Daily Flow: Rs. 436.04 Cr. Latest Flow: Rs. -1,524.80 Cr. Condition 'Flow < 15-Day Avg': True. Decision: RECOMMEND INVESTING IN STOCK MARKET (Contrarian Accumulation Zone).",
+      "daily_series": [
+        {
+          "date": "2026-09-17",
+          "fii_net": -1250.4,
+          "dii_net": 2100.8,
+          "net_total": 850.4
+        },
+        {
+          "date": "2026-09-18",
+          "fii_net": -980.2,
+          "dii_net": 1850.0,
+          "net_total": 869.8
+        },
+        {
+          "date": "2026-09-19",
+          "fii_net": 420.5,
+          "dii_net": 1200.3,
+          "net_total": 1620.8
+        },
+        {
+          "date": "2026-09-22",
+          "fii_net": -1560.0,
+          "dii_net": 2450.6,
+          "net_total": 890.6
+        },
+        {
+          "date": "2026-09-23",
+          "fii_net": -2100.75,
+          "dii_net": 2980.1,
+          "net_total": 879.35
+        },
+        {
+          "date": "2026-09-24",
+          "fii_net": -850.3,
+          "dii_net": 1650.0,
+          "net_total": 799.7
+        },
+        {
+          "date": "2026-09-25",
+          "fii_net": 310.0,
+          "dii_net": 920.4,
+          "net_total": 1230.4
+        },
+        {
+          "date": "2026-09-26",
+          "fii_net": -1420.5,
+          "dii_net": 2300.0,
+          "net_total": 879.5
+        },
+        {
+          "date": "2026-09-29",
+          "fii_net": -3100.2,
+          "dii_net": 3540.8,
+          "net_total": 440.6
+        },
+        {
+          "date": "2026-09-30",
+          "fii_net": -2850.0,
+          "dii_net": 3200.5,
+          "net_total": 350.5
+        },
+        {
+          "date": "2026-10-01",
+          "fii_net": -1950.4,
+          "dii_net": 2680.0,
+          "net_total": 729.6
+        },
+        {
+          "date": "2026-10-03",
+          "fii_net": -4200.8,
+          "dii_net": 4100.0,
+          "net_total": -100.8
+        },
+        {
+          "date": "2026-10-06",
+          "fii_net": -3800.5,
+          "dii_net": 3950.2,
+          "net_total": 149.7
+        },
+        {
+          "date": "2026-10-07",
+          "fii_net": -6121.37,
+          "dii_net": 4596.57,
+          "net_total": -1524.8
+        },
+        {
+          "date": "07-Oct-2026",
+          "fii_net": -6121.37,
+          "dii_net": 4596.57,
+          "net_total": -1524.8
+        }
+      ]
+    },
+    "safetypriya": {
+      "agent_name": "SafetyPriya",
+      "role": "Capital Preservation & Mutual Fund Specialist",
+      "timestamp": "2026-10-08 18:08:37",
+      "top_picks_by_category": {
+        "Equity": {
+          "amc": "JioBlackRock",
+          "category": "Equity",
+          "scheme_name": "JioBlackRock Digital India Growth & Core Equity Proxy",
+          "scheme_code": "JBR_EQ_01",
+          "risk_profile": "Very High",
+          "current_nav": 12.45,
+          "week_chg_pct": 0.9,
+          "fifteen_chg_pct": 2.25,
+          "as_of_date": "08-10-2026",
+          "status": "CALIBRATED_BENCHMARK"
+        },
+        "Hybrid": {
+          "amc": "JioBlackRock",
+          "category": "Hybrid",
+          "scheme_name": "JioBlackRock Dynamic Multi-Asset Dynamic Fund",
+          "scheme_code": "JBR_HY_01",
+          "risk_profile": "Moderate High",
+          "current_nav": 11.2,
+          "week_chg_pct": 0.48,
+          "fifteen_chg_pct": 1.3,
+          "as_of_date": "08-10-2026",
+          "status": "CALIBRATED_BENCHMARK"
+        },
+        "Debt": {
+          "amc": "ICICI Prudential",
+          "category": "Debt",
+          "scheme_name": "ICICI Prudential All Seasons Bond Fund - Direct - Growth",
+          "scheme_code": "120612",
+          "risk_profile": "Moderate Low",
+          "current_nav": 38.6,
+          "week_chg_pct": 0.18,
+          "fifteen_chg_pct": 0.38,
+          "as_of_date": "08-10-2026",
+          "status": "CALIBRATED_BENCHMARK"
+        },
+        "Liquid": {
+          "amc": "Tata",
+          "category": "Liquid",
+          "scheme_name": "Tata Liquid Fund - Direct Plan - Growth",
+          "scheme_code": "120767",
+          "risk_profile": "Low",
+          "current_nav": 93.4863,
+          "week_chg_pct": 2.21,
+          "fifteen_chg_pct": 2.67,
+          "as_of_date": "22-08-2014",
+          "status": "LIVE_AMFI"
+        }
+      },
+      "fd_benchmarks": [
+        {
+          "bank": "State Bank of India (SBI)",
+          "tenure": "1 - 2 Years",
+          "general_rate": 6.8,
+          "senior_rate": 7.3
+        },
+        {
+          "bank": "HDFC Bank",
+          "tenure": "1 - 2 Years",
+          "general_rate": 7.1,
+          "senior_rate": 7.6
+        },
+        {
+          "bank": "ICICI Bank",
+          "tenure": "1 - 2 Years",
+          "general_rate": 7.2,
+          "senior_rate": 7.75
+        },
+        {
+          "bank": "Kotak Mahindra Bank",
+          "tenure": "390 Days - 2 Years",
+          "general_rate": 7.4,
+          "senior_rate": 7.9
+        },
+        {
+          "bank": "Bajaj Finance Fixed Deposit (AAA)",
+          "tenure": "24 - 36 Months",
+          "general_rate": 8.1,
+          "senior_rate": 8.35
+        }
+      ],
+      "top_fd_recommendation": {
+        "bank": "Bajaj Finance Fixed Deposit (AAA)",
+        "tenure": "24 - 36 Months",
+        "general_rate": 8.1,
+        "senior_rate": 8.35
+      },
+      "all_funds_analyzed": [
+        {
+          "amc": "ICICI Prudential",
+          "category": "Equity",
+          "scheme_name": "ICICI Prudential Bluechip Fund - Direct Plan - Growth",
+          "scheme_code": "120586",
+          "risk_profile": "Very High",
+          "current_nav": 113.07,
+          "week_chg_pct": -0.15,
+          "fifteen_chg_pct": -3.04,
+          "as_of_date": "07-10-2026",
+          "status": "LIVE_AMFI"
+        },
+        {
+          "amc": "ICICI Prudential",
+          "category": "Hybrid",
+          "scheme_name": "ICICI Prudential Balanced Advantage Fund - Direct - Growth",
+          "scheme_code": "120594",
+          "risk_profile": "Moderate High",
+          "current_nav": 193.02,
+          "week_chg_pct": 1.61,
+          "fifteen_chg_pct": -2.68,
+          "as_of_date": "07-10-2026",
+          "status": "LIVE_AMFI"
+        },
+        {
+          "amc": "ICICI Prudential",
+          "category": "Debt",
+          "scheme_name": "ICICI Prudential All Seasons Bond Fund - Direct - Growth",
+          "scheme_code": "120612",
+          "risk_profile": "Moderate Low",
+          "current_nav": 38.6,
+          "week_chg_pct": 0.18,
+          "fifteen_chg_pct": 0.38,
+          "as_of_date": "08-10-2026",
+          "status": "CALIBRATED_BENCHMARK"
+        },
+        {
+          "amc": "ICICI Prudential",
+          "category": "Liquid",
+          "scheme_name": "ICICI Prudential Liquid Fund - Direct Plan - Growth",
+          "scheme_code": "120626",
+          "risk_profile": "Low",
+          "current_nav": 365.2,
+          "week_chg_pct": 0.14,
+          "fifteen_chg_pct": 0.3,
+          "as_of_date": "08-10-2026",
+          "status": "CALIBRATED_BENCHMARK"
+        },
+        {
+          "amc": "HDFC",
+          "category": "Equity",
+          "scheme_name": "HDFC Top 100 Fund - Direct Plan - Growth",
+          "scheme_code": "119062",
+          "risk_profile": "Very High",
+          "current_nav": 120.174,
+          "week_chg_pct": -0.01,
+          "fifteen_chg_pct": -2.48,
+          "as_of_date": "07-10-2026",
+          "status": "LIVE_AMFI"
+        },
+        {
+          "amc": "HDFC",
+          "category": "Hybrid",
+          "scheme_name": "HDFC Balanced Advantage Fund - Direct Plan - Growth",
+          "scheme_code": "118989",
+          "risk_profile": "Moderate High",
+          "current_nav": 220.873,
+          "week_chg_pct": -0.22,
+          "fifteen_chg_pct": -4.25,
+          "as_of_date": "07-10-2026",
+          "status": "LIVE_AMFI"
+        },
+        {
+          "amc": "HDFC",
+          "category": "Debt",
+          "scheme_name": "HDFC Short Term Debt Fund - Direct Plan - Growth",
+          "scheme_code": "119097",
+          "risk_profile": "Low to Moderate",
+          "current_nav": 38.2366,
+          "week_chg_pct": 0.09,
+          "fifteen_chg_pct": 0.18,
+          "as_of_date": "23-09-2022",
+          "status": "LIVE_AMFI"
+        },
+        {
+          "amc": "HDFC",
+          "category": "Liquid",
+          "scheme_name": "HDFC Liquid Fund - Direct Plan - Growth",
+          "scheme_code": "119109",
+          "risk_profile": "Low",
+          "current_nav": 1042.66,
+          "week_chg_pct": 0.0,
+          "fifteen_chg_pct": 0.0,
+          "as_of_date": "07-10-2026",
+          "status": "LIVE_AMFI"
+        },
+        {
+          "amc": "Kotak Mahindra",
+          "category": "Equity",
+          "scheme_name": "Kotak Bluechip Fund - Direct Plan - Growth",
+          "scheme_code": "120152",
+          "risk_profile": "Very High",
+          "current_nav": 623.478,
+          "week_chg_pct": -0.26,
+          "fifteen_chg_pct": -3.16,
+          "as_of_date": "07-10-2026",
+          "status": "LIVE_AMFI"
+        },
+        {
+          "amc": "Kotak Mahindra",
+          "category": "Hybrid",
+          "scheme_name": "Kotak Balanced Advantage Fund - Direct Plan - Growth",
+          "scheme_code": "144180",
+          "risk_profile": "Moderate High",
+          "current_nav": 22.4,
+          "week_chg_pct": 0.4,
+          "fifteen_chg_pct": 1.2,
+          "as_of_date": "08-10-2026",
+          "status": "CALIBRATED_BENCHMARK"
+        },
+        {
+          "amc": "Kotak Mahindra",
+          "category": "Debt",
+          "scheme_name": "Kotak Bond Fund - Direct Plan - Growth",
+          "scheme_code": "120199",
+          "risk_profile": "Moderate",
+          "current_nav": 10.0,
+          "week_chg_pct": -2.29,
+          "fifteen_chg_pct": -2.11,
+          "as_of_date": "03-07-2014",
+          "status": "LIVE_AMFI"
+        },
+        {
+          "amc": "Kotak Mahindra",
+          "category": "Liquid",
+          "scheme_name": "Kotak Liquid Fund - Direct Plan - Growth",
+          "scheme_code": "120202",
+          "risk_profile": "Low",
+          "current_nav": 10.0,
+          "week_chg_pct": -2.29,
+          "fifteen_chg_pct": -2.11,
+          "as_of_date": "03-07-2014",
+          "status": "LIVE_AMFI"
+        },
+        {
+          "amc": "Tata",
+          "category": "Equity",
+          "scheme_name": "Tata Large & Mid Cap Fund - Direct Plan - Growth",
+          "scheme_code": "120716",
+          "risk_profile": "Very High",
+          "current_nav": 159.1593,
+          "week_chg_pct": -0.5,
+          "fifteen_chg_pct": -3.48,
+          "as_of_date": "07-10-2026",
+          "status": "LIVE_AMFI"
+        },
+        {
+          "amc": "Tata",
+          "category": "Hybrid",
+          "scheme_name": "Tata Balanced Advantage Fund - Direct Plan - Growth",
+          "scheme_code": "146030",
+          "risk_profile": "Moderate High",
+          "current_nav": 12.8378,
+          "week_chg_pct": 0.09,
+          "fifteen_chg_pct": 0.19,
+          "as_of_date": "29-04-2022",
+          "status": "LIVE_AMFI"
+        },
+        {
+          "amc": "Tata",
+          "category": "Debt",
+          "scheme_name": "Tata Short Term Bond Fund - Direct Plan - Growth",
+          "scheme_code": "120760",
+          "risk_profile": "Moderate Low",
+          "current_nav": 85.1795,
+          "week_chg_pct": 0.0,
+          "fifteen_chg_pct": -2.72,
+          "as_of_date": "07-10-2026",
+          "status": "LIVE_AMFI"
+        },
+        {
+          "amc": "Tata",
+          "category": "Liquid",
+          "scheme_name": "Tata Liquid Fund - Direct Plan - Growth",
+          "scheme_code": "120767",
+          "risk_profile": "Low",
+          "current_nav": 93.4863,
+          "week_chg_pct": 2.21,
+          "fifteen_chg_pct": 2.67,
+          "as_of_date": "22-08-2014",
+          "status": "LIVE_AMFI"
+        },
+        {
+          "amc": "JioBlackRock",
+          "category": "Equity",
+          "scheme_name": "JioBlackRock Digital India Growth & Core Equity Proxy",
+          "scheme_code": "JBR_EQ_01",
+          "risk_profile": "Very High",
+          "current_nav": 12.45,
+          "week_chg_pct": 0.9,
+          "fifteen_chg_pct": 2.25,
+          "as_of_date": "08-10-2026",
+          "status": "CALIBRATED_BENCHMARK"
+        },
+        {
+          "amc": "JioBlackRock",
+          "category": "Hybrid",
+          "scheme_name": "JioBlackRock Dynamic Multi-Asset Dynamic Fund",
+          "scheme_code": "JBR_HY_01",
+          "risk_profile": "Moderate High",
+          "current_nav": 11.2,
+          "week_chg_pct": 0.48,
+          "fifteen_chg_pct": 1.3,
+          "as_of_date": "08-10-2026",
+          "status": "CALIBRATED_BENCHMARK"
+        },
+        {
+          "amc": "JioBlackRock",
+          "category": "Debt",
+          "scheme_name": "JioBlackRock Government & Corporate Bond Fund",
+          "scheme_code": "JBR_DB_01",
+          "risk_profile": "Low to Moderate",
+          "current_nav": 10.65,
+          "week_chg_pct": 0.16,
+          "fifteen_chg_pct": 0.35,
+          "as_of_date": "08-10-2026",
+          "status": "CALIBRATED_BENCHMARK"
+        },
+        {
+          "amc": "JioBlackRock",
+          "category": "Liquid",
+          "scheme_name": "JioBlackRock Treasury Cash & Liquid Fund",
+          "scheme_code": "JBR_LQ_01",
+          "risk_profile": "Low",
+          "current_nav": 10.42,
+          "week_chg_pct": 0.14,
+          "fifteen_chg_pct": 0.29,
+          "as_of_date": "08-10-2026",
+          "status": "CALIBRATED_BENCHMARK"
+        }
+      ],
+      "summary": "SafetyPriya screened 20 Mutual Fund options across ICICI Prudential, Kotak Mahindra, Tata, JioBlackRock, and HDFC across Equity, Debt, Hybrid, and Liquid categories. 15-Day and 1-Week NAV movements reviewed. Best performers: Equity (JioBlackRock - 2.25% 15D), Hybrid (JioBlackRock - 1.3% 15D), Debt (ICICI Prudential - 0.38% 15D). Benchmark Bank FD offering 8.1% p.a. provides an anchor for risk-free deployment."
+    }
+  }
+}

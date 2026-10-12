@@ -1,0 +1,3224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>5-Agent Indian Fund Deployment Advisory Web App</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0fdf4',
+              500: '#22c55e',
+              600: '#16a34a',
+              700: '#15803d',
+              900: '#14532d',
+            },
+            slateDark: '#0f172a',
+            cardDark: '#151e2e',
+            borderDark: '#283548'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #0b0f19;
+      color: #f1f5f9;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
+    .gradient-header {
+      background: linear-gradient(135deg, #162032 0%, #0c121e 100%);
+      border-bottom: 1px solid #283548;
+    }
+    .agent-card {
+      background: #151e2e;
+      border: 1px solid #283548;
+      transition: all 0.2s ease-in-out;
+    }
+    .agent-card:hover {
+      border-color: #3b82f6;
+      box-shadow: 0 4px 20px rgba(59, 130, 246, 0.12);
+    }
+    .tab-active {
+      background-color: #2563eb;
+      color: #ffffff;
+      font-weight: 600;
+    }
+    @media print {
+      header, .no-print { display: none !important; }
+      body { background-color: #fff !important; color: #000 !important; }
+      .agent-card { border: 1px solid #ccc !important; background: #fff !important; color: #000 !important; }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+  <!-- Header -->
+  <header class="gradient-header py-4 px-6 sticky top-0 z-50 shadow-md">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="w-11 h-11 rounded-xl bg-gradient-to-tr from-blue-600 to-emerald-500 flex items-center justify-center shadow-lg">
+          <i class="fa-solid fa-brain text-white text-xl"></i>
+        </div>
+        <div>
+          <h1 class="text-xl font-bold tracking-tight text-white flex items-center gap-2">
+            Multi-Agent Fund Deployment Advisory
+            <span class="text-xs bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded-full font-mono">Port 8010</span>
+          </h1>
+          <p class="text-xs text-slate-400">Jasoos • Explorer • GrihaLaxmi • SafetyPriya • Buddhiman • Sarathy • Viswakarma • Chitragupthan</p>
+        </div>
+      </div>
+
+      <!-- Action Controls -->
+      <div class="flex items-center gap-2 md:gap-3 flex-wrap">
+        <button id="btnSimulate" onclick="openChitragupthanSimulation()" class="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold text-xs px-4 py-2.5 rounded-lg flex items-center gap-2 shadow-lg shadow-purple-600/30 transition-all border border-purple-400/40">
+          <i class="fa-solid fa-scroll text-amber-300"></i>
+          <span>Simulate</span>
+        </button>
+        <button id="btnSynthesize" onclick="runSynthesis()" class="bg-blue-600 hover:bg-blue-500 text-white font-medium text-xs px-4 py-2.5 rounded-lg flex items-center gap-2 shadow-lg shadow-blue-600/30 transition-all">
+          <i class="fa-solid fa-arrows-rotate" id="syncIcon"></i>
+          <span>Run Friday Synthesis</span>
+        </button>
+        <button onclick="downloadDossier()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-600 font-medium text-xs px-3.5 py-2.5 rounded-lg flex items-center gap-2 transition-all">
+          <i class="fa-solid fa-download text-emerald-400"></i>
+          <span>Download Dossier (.md)</span>
+        </button>
+        <button onclick="window.print()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-600 font-medium text-xs px-3 py-2.5 rounded-lg flex items-center gap-1.5 transition-all">
+          <i class="fa-solid fa-print"></i>
+          <span>Print / PDF</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Notification Toast -->
+  <div id="toast" class="hidden fixed bottom-6 right-6 bg-slate-800 border border-slate-700 text-white px-4 py-3 rounded-lg shadow-2xl z-50 flex items-center gap-3 text-sm">
+    <i id="toastIcon" class="fa-solid fa-circle-check text-emerald-400"></i>
+    <span id="toastMsg">Operation successful</span>
+  </div>
+
+  <!-- Main Container -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 space-y-6">
+
+    <!-- Top Snapshot Row: Dates & 4 Signal Cards -->
+    <section class="grid grid-cols-1 md:grid-cols-4 gap-4">
+      
+      <!-- Explorer Macro Card -->
+      <div class="agent-card rounded-xl p-4">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-xs font-semibold text-blue-400 flex items-center gap-1.5">
+            <i class="fa-solid fa-globe"></i> Explorer (Macro)
+          </span>
+          <span id="statExplorerBiasBadge" class="text-[10px] px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 font-medium">Loading</span>
+        </div>
+        <div class="text-2xl font-bold" id="statExplorerScore">--</div>
+        <div class="text-xs text-slate-400 mt-1 flex justify-between">
+          <span>NIFTY Impact:</span>
+          <span id="statNiftyBias" class="font-mono text-slate-200">--</span>
+        </div>
+      </div>
+
+      <!-- GrihaLaxmi FII/DII Card -->
+      <div class="agent-card rounded-xl p-4">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-xs font-semibold text-emerald-400 flex items-center gap-1.5">
+            <i class="fa-solid fa-coins"></i> GrihaLaxmi (NII Sentinel)
+          </span>
+          <span id="statGrihaRuleBadge" class="text-[10px] px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 font-medium">Loading</span>
+        </div>
+        <div class="text-2xl font-bold" id="statGrihaLatest">--</div>
+        <div class="text-xs text-slate-400 mt-1 flex justify-between">
+          <span>15D Avg of Cum. NII:</span>
+          <span id="statGriha15DMA" class="font-mono text-slate-200">--</span>
+        </div>
+      </div>
+
+      <!-- Jasoos Stock Sleuth Card -->
+      <div class="agent-card rounded-xl p-4">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-xs font-semibold text-amber-400 flex items-center gap-1.5">
+            <i class="fa-solid fa-bolt"></i> Jasoos (Block Deals)
+          </span>
+          <span class="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-300 font-medium">Top 15 Block Deals</span>
+        </div>
+        <div class="text-2xl font-bold truncate" id="statJasoosTopStock">--</div>
+        <div class="text-xs text-slate-400 mt-1 flex justify-between">
+          <span>Top Deal Conviction:</span>
+          <span id="statJasoosTopScore" class="font-mono text-amber-400">--</span>
+        </div>
+      </div>
+
+      <!-- SafetyPriya MF & FD Card -->
+      <div class="agent-card rounded-xl p-4">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-xs font-semibold text-purple-400 flex items-center gap-1.5">
+            <i class="fa-solid fa-shield-halved"></i> SafetyPriya (Safety)
+          </span>
+          <span class="text-[10px] px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-300 font-medium">5 AMCs + FDs</span>
+        </div>
+        <div class="text-2xl font-bold truncate" id="statSafetyTopPick">--</div>
+        <div class="text-xs text-slate-400 mt-1 flex justify-between">
+          <span>Benchmark Safe FD:</span>
+          <span id="statSafetyFDRate" class="font-mono text-purple-300">--</span>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Schedule Ribbon -->
+    <div class="bg-gradient-to-r from-blue-900/40 via-indigo-900/30 to-purple-900/40 border border-blue-800/40 rounded-xl p-4 flex flex-col md:flex-row items-center justify-between gap-3 text-xs">
+      <div class="flex items-center gap-2">
+        <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span class="text-slate-300">Recommendation Formulated:</span>
+        <span class="font-semibold text-white" id="dateFriday">Friday, --</span>
+      </div>
+      <div class="flex items-center gap-2 bg-blue-950/80 px-3 py-1.5 rounded-lg border border-blue-700/50">
+        <i class="fa-regular fa-calendar-check text-blue-400"></i>
+        <span class="text-slate-300">Target Action Execution Date:</span>
+        <span class="font-bold text-emerald-400" id="dateMonday">Monday, --</span>
+      </div>
+      <div class="text-slate-400">
+        Strategic Regime: <span class="font-semibold text-amber-300" id="regimeBadge">Synthesizing...</span>
+      </div>
+    </div>
+
+    <!-- Fresh Funds Capital Deployment Calculator Widget -->
+    <section class="agent-card rounded-xl p-5 border border-emerald-500/30 bg-gradient-to-r from-slate-900 via-slate-900/90 to-emerald-950/20">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h2 class="text-sm font-bold text-emerald-400 flex items-center gap-2">
+            <i class="fa-solid fa-calculator text-emerald-400"></i>
+            Fresh Funds Deployment Calculator
+          </h2>
+          <p class="text-xs text-slate-400 mt-0.5">Enter your fresh investable capital to calculate the exact Rupee allocation and share/unit quantities for Monday.</p>
+        </div>
+        
+        <div class="flex items-center gap-2">
+          <div class="relative">
+            <span class="absolute left-3 top-2.5 text-xs text-slate-400">Rs.</span>
+            <input type="number" id="inputCapital" value="100000" step="5000" min="1000" 
+                   oninput="updateAllocationAmounts()" 
+                   class="bg-slate-950 border border-slate-700 rounded-lg pl-9 pr-3 py-2 text-sm text-white font-mono w-44 focus:outline-none focus:border-emerald-500" />
+          </div>
+          <button onclick="updateAllocationAmounts()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs px-3.5 py-2.5 rounded-lg font-medium transition-all">
+            Recalculate
+          </button>
+          <button onclick="openChitragupthanSimulation()" class="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs px-3.5 py-2.5 rounded-lg font-bold flex items-center gap-1.5 transition-all shadow-md shadow-purple-600/30">
+            <i class="fa-solid fa-scroll text-amber-300"></i> Simulate
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick Preset Buttons -->
+      <div class="flex items-center gap-2 mt-3 flex-wrap text-xs">
+        <span class="text-slate-400 text-[11px]">Quick Presets:</span>
+        <button onclick="setCapitalPreset(50000)" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1 rounded border border-slate-700 text-[11px]">Rs. 50K</button>
+        <button onclick="setCapitalPreset(100000)" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1 rounded border border-slate-700 text-[11px]">Rs. 1 Lakh</button>
+        <button onclick="setCapitalPreset(250000)" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1 rounded border border-slate-700 text-[11px]">Rs. 2.5 Lakh</button>
+        <button onclick="setCapitalPreset(500000)" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1 rounded border border-slate-700 text-[11px]">Rs. 5 Lakh</button>
+        <button onclick="setCapitalPreset(1000000)" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1 rounded border border-slate-700 text-[11px]">Rs. 10 Lakh</button>
+      </div>
+    </section>
+
+    <!-- Navigation Tabs -->
+    <div class="flex items-center gap-2 border-b border-slate-800 pb-2 overflow-x-auto text-xs no-print">
+      <button onclick="switchTab('buddhiman')" id="tab-buddhiman" class="tab-btn tab-active px-4 py-2 rounded-lg transition-all flex items-center gap-2">
+        <i class="fa-solid fa-crown text-amber-400"></i> Buddhiman (Chief Allocator)
+      </button>
+      <button onclick="switchTab('jasoos')" id="tab-jasoos" class="tab-btn px-4 py-2 rounded-lg bg-slate-900 text-slate-400 hover:text-white transition-all flex items-center gap-2">
+        <i class="fa-solid fa-bolt text-amber-400"></i> Jasoos (Top 15 Block Deals - 10D)
+      </button>
+      <button onclick="switchTab('explorer')" id="tab-explorer" class="tab-btn px-4 py-2 rounded-lg bg-slate-900 text-slate-400 hover:text-white transition-all flex items-center gap-2">
+        <i class="fa-solid fa-earth-americas text-blue-400"></i> Explorer (Global Macro)
+      </button>
+      <button onclick="switchTab('grihalaxmi')" id="tab-grihalaxmi" class="tab-btn px-4 py-2 rounded-lg bg-slate-900 text-slate-400 hover:text-white transition-all flex items-center gap-2">
+        <i class="fa-solid fa-hand-holding-dollar text-emerald-400"></i> GrihaLaxmi (FII/DII)
+      </button>
+      <button onclick="switchTab('safetypriya')" id="tab-safetypriya" class="tab-btn px-4 py-2 rounded-lg bg-slate-900 text-slate-400 hover:text-white transition-all flex items-center gap-2">
+        <i class="fa-solid fa-shield text-purple-400"></i> SafetyPriya (MFs & FDs)
+      </button>
+      <button onclick="switchTab('stockbull')" id="tab-stockbull" class="tab-btn px-4 py-2 rounded-lg bg-slate-900 text-slate-400 hover:text-white transition-all flex items-center gap-2 border border-emerald-500/30">
+        <i class="fa-solid fa-arrow-trend-up text-emerald-400"></i> StockBull (100% Equities)
+      </button>
+      <button onclick="switchTab('mfhussain')" id="tab-mfhussain" class="tab-btn px-4 py-2 rounded-lg bg-slate-900 text-slate-400 hover:text-white transition-all flex items-center gap-2 border border-blue-500/30">
+        <i class="fa-solid fa-palette text-blue-400"></i> MFHussain (100% MFs)
+      </button>
+      <button onclick="switchTab('fdlover')" id="tab-fdlover" class="tab-btn px-4 py-2 rounded-lg bg-slate-900 text-slate-400 hover:text-white transition-all flex items-center gap-2 border border-amber-500/30">
+        <i class="fa-solid fa-lock text-amber-400"></i> FDLover (100% FDs/Bonds)
+      </button>
+      <button onclick="switchTab('chitragupthan')" id="tab-chitragupthan" class="tab-btn px-4 py-2 rounded-lg bg-slate-900 text-slate-400 hover:text-white transition-all flex items-center gap-2 border border-purple-500/30">
+        <i class="fa-solid fa-scroll text-purple-400"></i> Chitragupthan (Simulation Ledger)
+      </button>
+      <button onclick="switchTab('sarathy')" id="tab-sarathy" class="tab-btn px-4 py-2 rounded-lg bg-slate-900 text-slate-400 hover:text-white transition-all flex items-center gap-2 border border-cyan-500/30">
+        <i class="fa-solid fa-compass text-cyan-400"></i> Sarathy (Audit & Web Scout)
+      </button>
+      <button onclick="switchTab('viswakarma')" id="tab-viswakarma" class="tab-btn px-4 py-2 rounded-lg bg-slate-900 text-slate-400 hover:text-white transition-all flex items-center gap-2 border border-orange-500/30">
+        <i class="fa-solid fa-hammer text-orange-400"></i> Viswakarma (Lead Engineer)
+      </button>
+    </div>
+
+    <!-- TAB 1: BUDDHIMAN ORCHESTRATION & 5 MONDAY PICKS -->
+    <section id="pane-buddhiman" class="space-y-6">
+      
+      <!-- Asset Allocation Bar -->
+      <div class="agent-card rounded-xl p-5">
+        <h2 class="text-sm font-bold text-white mb-3 flex items-center gap-2">
+          <i class="fa-solid fa-chart-pie text-blue-400"></i>
+          Fresh Funds Capital Allocation Matrix
+        </h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+          <div class="bg-slate-900/80 p-3 rounded-lg border border-slate-800">
+            <span class="text-xs text-slate-400">Individual Stocks</span>
+            <div class="text-xl font-bold text-emerald-400" id="allocStocks">--%</div>
+            <div class="text-xs font-mono text-emerald-300 mt-1" id="allocStocksAmt">Rs. --</div>
+          </div>
+          <div class="bg-slate-900/80 p-3 rounded-lg border border-slate-800">
+            <span class="text-xs text-slate-400">Mutual Funds</span>
+            <div class="text-xl font-bold text-blue-400" id="allocMFs">--%</div>
+            <div class="text-xs font-mono text-blue-300 mt-1" id="allocMFsAmt">Rs. --</div>
+          </div>
+          <div class="bg-slate-900/80 p-3 rounded-lg border border-slate-800">
+            <span class="text-xs text-slate-400">Index & Sector ETFs</span>
+            <div class="text-xl font-bold text-purple-400" id="allocETFs">--%</div>
+            <div class="text-xs font-mono text-purple-300 mt-1" id="allocETFsAmt">Rs. --</div>
+          </div>
+          <div class="bg-slate-900/80 p-3 rounded-lg border border-slate-800">
+            <span class="text-xs text-slate-400">Fixed Deposits (FDs)</span>
+            <div class="text-xl font-bold text-amber-400" id="allocFDs">--%</div>
+            <div class="text-xs font-mono text-amber-300 mt-1" id="allocFDsAmt">Rs. --</div>
+          </div>
+        </div>
+        <p class="text-xs text-slate-300 leading-relaxed bg-slate-900/60 p-3 rounded-lg border border-slate-800/60" id="execSummaryText">
+          Loading synthesizer findings...
+        </p>
+      </div>
+
+      <!-- BUDDHIMAN'S COUNCIL OF 3 ADVOCATES: THE 100% SINGLE-ASSET DEBATE -->
+      <div class="agent-card rounded-xl p-5 border border-indigo-500/40 bg-gradient-to-br from-slate-900 via-indigo-950/20 to-slate-950">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-4">
+          <div>
+            <h2 class="text-base font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-scale-balanced text-indigo-400"></i>
+              Buddhiman's Council of 3 Advocates: The 100% Single-Asset Debate
+            </h2>
+            <p class="text-xs text-slate-400">
+              Three specialized sub-agents pitch 100% fund deployment into their respective asset classes. Buddhiman arbitrates their competing arguments against macro data.
+            </p>
+          </div>
+          <span class="text-xs px-2.5 py-1 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 font-medium">
+            Advocate Arbitration
+          </span>
+        </div>
+
+        <!-- Supreme Arbitration Ruling Callout -->
+        <div class="bg-indigo-950/60 border border-indigo-700/50 rounded-xl p-4 mb-5">
+          <div class="flex items-center gap-2 text-xs font-bold text-indigo-300 uppercase tracking-wider mb-1.5">
+            <i class="fa-solid fa-gavel text-amber-400"></i>
+            Buddhiman Supreme CIO Arbitration Ruling
+          </div>
+          <p class="text-xs text-slate-200 leading-relaxed font-medium" id="councilRulingText">
+            Loading arbitration verdict...
+          </p>
+        </div>
+
+        <!-- 3 Competing Pitches Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <!-- StockBull Pitch Card -->
+          <div class="bg-slate-900/90 rounded-xl p-4 border border-emerald-500/30 flex flex-col justify-between hover:border-emerald-400 transition-all">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-bold text-emerald-400 flex items-center gap-1.5">
+                  <i class="fa-solid fa-arrow-trend-up"></i> StockBull (Equities)
+                </span>
+                <span class="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded font-bold font-mono">100% Stocks</span>
+              </div>
+              <div class="text-xs font-semibold text-white mb-1" id="stockBullPitchTitle">100% Direct Equity Allocation</div>
+              <p class="text-[11px] text-slate-300 leading-snug mb-3" id="stockBullPitchSummary">--</p>
+              
+              <div class="space-y-1.5 pt-2 border-t border-slate-800">
+                <span class="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Top 5 Curated Picks (100%):</span>
+                <div id="stockBullMiniPicks" class="space-y-1 text-[11px]">
+                  <!-- Populated by JS -->
+                </div>
+              </div>
+            </div>
+            <div class="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between text-xs">
+              <span class="text-slate-400 text-[10px]">Expected CAGR: <strong class="text-emerald-400">18% - 24%</strong></span>
+              <button onclick="switchTab('stockbull')" class="text-emerald-400 hover:text-emerald-300 text-[11px] font-semibold flex items-center gap-1">
+                Full Pitch <i class="fa-solid fa-arrow-right"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- MFHussain Pitch Card -->
+          <div class="bg-slate-900/90 rounded-xl p-4 border border-blue-500/30 flex flex-col justify-between hover:border-blue-400 transition-all">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-bold text-blue-400 flex items-center gap-1.5">
+                  <i class="fa-solid fa-palette"></i> MFHussain (Mutual Funds)
+                </span>
+                <span class="text-[10px] bg-blue-500/20 text-blue-300 px-2 py-0.5 rounded font-bold font-mono">100% MFs</span>
+              </div>
+              <div class="text-xs font-semibold text-white mb-1" id="mfHussainPitchTitle">100% Mutual Funds Allocation</div>
+              <p class="text-[11px] text-slate-300 leading-snug mb-3" id="mfHussainPitchSummary">--</p>
+              
+              <div class="space-y-1.5 pt-2 border-t border-slate-800">
+                <span class="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Top 5 Curated Funds (100%):</span>
+                <div id="mfHussainMiniPicks" class="space-y-1 text-[11px]">
+                  <!-- Populated by JS -->
+                </div>
+              </div>
+            </div>
+            <div class="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between text-xs">
+              <span class="text-slate-400 text-[10px]">Expected Return: <strong class="text-blue-400">14% - 17%</strong></span>
+              <button onclick="switchTab('mfhussain')" class="text-blue-400 hover:text-blue-300 text-[11px] font-semibold flex items-center gap-1">
+                Full Pitch <i class="fa-solid fa-arrow-right"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- FDLover Pitch Card -->
+          <div class="bg-slate-900/90 rounded-xl p-4 border border-amber-500/30 flex flex-col justify-between hover:border-amber-400 transition-all">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-bold text-amber-400 flex items-center gap-1.5">
+                  <i class="fa-solid fa-lock"></i> FDLover (FDs & Bonds)
+                </span>
+                <span class="text-[10px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded font-bold font-mono">100% Fixed Income</span>
+              </div>
+              <div class="text-xs font-semibold text-white mb-1" id="fdLoverPitchTitle">100% FDs & AAA Bonds</div>
+              <p class="text-[11px] text-slate-300 leading-snug mb-3" id="fdLoverPitchSummary">--</p>
+              
+              <div class="space-y-1.5 pt-2 border-t border-slate-800">
+                <span class="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Top 5 Curated Options (100%):</span>
+                <div id="fdLoverMiniPicks" class="space-y-1 text-[11px]">
+                  <!-- Populated by JS -->
+                </div>
+              </div>
+            </div>
+            <div class="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between text-xs">
+              <span class="text-slate-400 text-[10px]">Blended Yield: <strong class="text-amber-400" id="fdLoverBlendedYieldText">8.03% p.a.</strong></span>
+              <button onclick="switchTab('fdlover')" class="text-amber-400 hover:text-amber-300 text-[11px] font-semibold flex items-center gap-1">
+                Full Pitch <i class="fa-solid fa-arrow-right"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sarathy & Viswakarma Continuous Feedback Loop Callout -->
+        <div class="mt-4 bg-gradient-to-r from-cyan-950/40 via-slate-900 to-orange-950/40 border border-cyan-700/40 rounded-xl p-3.5 flex flex-col md:flex-row items-center justify-between gap-3 text-xs">
+          <div class="flex items-center gap-2.5">
+            <span class="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse"></span>
+            <div>
+              <span class="font-bold text-white flex items-center gap-1.5">
+                <i class="fa-solid fa-arrows-spin text-cyan-400"></i> Sarathy & Viswakarma Continuous Improvement Loop:
+              </span>
+              <span class="text-slate-300 text-[11px]" id="buddhimanFeedbackLoopText">
+                Target Upgrade Cycle: <strong class="text-amber-300">Friday, 16 October 2026</strong> (for Monday, 19 October 2026). Auditing Chitragupthan simulations & deploying patches across StockBull, MFHussain, FDLover & Buddhiman.
+              </span>
+            </div>
+          </div>
+          <div class="flex items-center gap-2 flex-shrink-0">
+            <button onclick="switchTab('sarathy')" class="bg-cyan-600/20 hover:bg-cyan-600/30 text-cyan-300 border border-cyan-500/30 text-[11px] font-semibold px-2.5 py-1 rounded transition-all flex items-center gap-1">
+              <i class="fa-solid fa-compass text-cyan-400"></i> Sarathy Audit
+            </button>
+            <button onclick="switchTab('viswakarma')" class="bg-orange-600/20 hover:bg-orange-600/30 text-orange-300 border border-orange-500/30 text-[11px] font-semibold px-2.5 py-1 rounded transition-all flex items-center gap-1">
+              <i class="fa-solid fa-hammer text-orange-400"></i> Viswakarma Patches
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- The 5 Picks for Monday (With Quantities & Rupees calculated) -->
+      <div>
+        <div class="flex items-center justify-between mb-3">
+          <h2 class="text-base font-bold text-white flex items-center gap-2">
+            <i class="fa-solid fa-list-check text-emerald-400"></i>
+            The 5 Recommended Picks for Upcoming Monday
+          </h2>
+          <span class="text-xs text-slate-400">Action to be taken on Upcoming Monday</span>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-4" id="fivePicksContainer">
+          <!-- Dynamically Populated Cards with Quantities & Allocations -->
+        </div>
+      </div>
+
+      <!-- Monday Execution Playbook -->
+      <div class="agent-card rounded-xl p-5 border border-slate-700/60">
+        <h3 class="text-sm font-bold text-white mb-3 flex items-center gap-2">
+          <i class="fa-solid fa-clipboard-list text-blue-400"></i>
+          Monday Deployment Step-by-Step Playbook
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-xs">
+          <div class="bg-slate-900 p-3.5 rounded-lg border border-slate-800 space-y-1">
+            <div class="font-semibold text-blue-400 flex items-center gap-1.5">
+              <span class="w-4 h-4 rounded-full bg-blue-500/20 text-center leading-4 text-[10px]">1</span>
+              09:00 - 09:08 IST
+            </div>
+            <div class="text-slate-300 font-medium">Pre-Market Validation</div>
+            <p class="text-slate-400 text-[11px]">Inspect GIFT Nifty and Explorer morning Asian cue before committing orders.</p>
+          </div>
+          <div class="bg-slate-900 p-3.5 rounded-lg border border-slate-800 space-y-1">
+            <div class="font-semibold text-emerald-400 flex items-center gap-1.5">
+              <span class="w-4 h-4 rounded-full bg-emerald-500/20 text-center leading-4 text-[10px]">2</span>
+              09:15 - 10:30 IST
+            </div>
+            <div class="text-slate-300 font-medium">Equities & ETFs</div>
+            <p class="text-slate-400 text-[11px]">Place staggered limit buy orders for the selected high-conviction stocks and ETFs.</p>
+          </div>
+          <div class="bg-slate-900 p-3.5 rounded-lg border border-slate-800 space-y-1">
+            <div class="font-semibold text-purple-400 flex items-center gap-1.5">
+              <span class="w-4 h-4 rounded-full bg-purple-500/20 text-center leading-4 text-[10px]">3</span>
+              Before 14:00 IST
+            </div>
+            <div class="text-slate-300 font-medium">Mutual Funds Order</div>
+            <p class="text-slate-400 text-[11px]">Submit lump sum or register weekly SIP on AMC portals/BSE StAR MF for same-day NAV.</p>
+          </div>
+          <div class="bg-slate-900 p-3.5 rounded-lg border border-slate-800 space-y-1">
+            <div class="font-semibold text-amber-400 flex items-center gap-1.5">
+              <span class="w-4 h-4 rounded-full bg-amber-500/20 text-center leading-4 text-[10px]">4</span>
+              Anytime Monday
+            </div>
+            <div class="text-slate-300 font-medium">Bank Term Deposit</div>
+            <p class="text-slate-400 text-[11px]">Book the recommended AAA / Scheduled Bank Fixed Deposit via NetBanking instantly.</p>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- TAB 2: JASOOS (PREVIOUS 10 DAYS MARKET BLOCK DEALS - TOP 15) -->
+    <section id="pane-jasoos" class="space-y-4 hidden">
+      <div class="agent-card rounded-xl p-5">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-4">
+          <div>
+            <h2 class="text-base font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-bolt text-amber-400"></i>
+              Agent 1: Jasoos - 10-Day Market Block Deals Surveillance (Top 15 Block Deals)
+            </h2>
+            <p class="text-xs text-slate-400" id="jasoosSummaryText">Monitors all block and bulk deals executed over the previous 10 trading days across NSE & BSE, selecting the Top 15 Block Deals by transaction value.</p>
+          </div>
+          <button onclick="refreshJasoos(this)" class="bg-amber-600/30 hover:bg-amber-600/50 text-amber-300 border border-amber-500/40 px-3 py-1.5 rounded-lg text-xs flex items-center gap-1.5 whitespace-nowrap">
+            <i class="fa-solid fa-rotate"></i> Re-Scan 10-Day Block Deals
+          </button>
+        </div>
+
+        <!-- 4 10-Day Block Deal Metric Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-5">
+          <div class="bg-slate-900 p-3.5 rounded-xl border border-slate-800">
+            <span class="text-xs text-slate-400">Deals Scanned (Previous 10 Days)</span>
+            <div class="text-lg font-bold text-amber-400 mt-1" id="jasoosTotalDeals">-- Deals</div>
+            <div class="text-[10px] text-slate-500 mt-0.5" id="jasoosWindowText">Rolling 10-Day Trading Window</div>
+          </div>
+          <div class="bg-slate-900 p-3.5 rounded-xl border border-slate-800">
+            <span class="text-xs text-slate-400">10-Day Market Block Volume</span>
+            <div class="text-lg font-bold text-emerald-400 mt-1" id="jasoosMarketBlockVal">--</div>
+            <div class="text-[10px] text-slate-500 mt-0.5">NSE & BSE cumulative turnover</div>
+          </div>
+          <div class="bg-slate-900 p-3.5 rounded-xl border border-slate-800">
+            <span class="text-xs text-slate-400">Top 15 Combined Value (10D)</span>
+            <div class="text-lg font-bold text-blue-400 mt-1" id="jasoosTop15Val">--</div>
+            <div class="text-[10px] text-slate-500 mt-0.5">Sum of top 15 transactions</div>
+          </div>
+          <div class="bg-slate-900 p-3.5 rounded-xl border border-slate-800">
+            <span class="text-xs text-slate-400">Largest Deal in 10 Days</span>
+            <div class="text-lg font-bold text-purple-400 mt-1" id="jasoosLargestDeal">--</div>
+            <div class="text-[10px] text-slate-500 mt-0.5" id="jasoosLargestDealStock">Marquee institutional trade</div>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs border-collapse">
+            <thead>
+              <tr class="bg-slate-900/90 text-slate-400 uppercase tracking-wider text-[11px] border-b border-slate-800">
+                <th class="py-3 px-3">#</th>
+                <th class="py-3 px-3">Date (10D)</th>
+                <th class="py-3 px-3">Stock Symbol</th>
+                <th class="py-3 px-3">Company & Sector</th>
+                <th class="py-3 px-3 text-right">10-Day Deal Value</th>
+                <th class="py-3 px-3">Type & Shares</th>
+                <th class="py-3 px-3">Institutional Counterparties</th>
+                <th class="py-3 px-3">CMP (Rs)</th>
+                <th class="py-3 px-3">1-Week</th>
+                <th class="py-3 px-3">Vol Spike</th>
+                <th class="py-3 px-3">Score</th>
+                <th class="py-3 px-3">Verdict</th>
+              </tr>
+            </thead>
+            <tbody id="jasoosStocksTable" class="divide-y divide-slate-800 text-slate-200">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: EXPLORER (GLOBAL MACRO, 9 INDICES, BROKER PREDICTIONS, GRAHAM NORMS, CENTRAL BANKS) -->
+    <section id="pane-explorer" class="space-y-6 hidden">
+      <div class="agent-card rounded-xl p-5">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-3">
+          <div>
+            <h2 class="text-base font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-earth-americas text-blue-400"></i>
+              Agent 2: Explorer - Global Trends, Broker Consensus Validation, Graham Valuation & Bond Yields
+            </h2>
+            <p class="text-xs text-slate-400 mt-0.5" id="explorerSummaryText">
+              Evaluating 9 global benchmarks over 15 days, synthesizing leading broker forecasts, calculating Benjamin Graham norms across 30 stocks, and tracking global central bank interest rate actions.
+            </p>
+          </div>
+          <button onclick="refreshExplorer(this)" class="bg-blue-600/30 hover:bg-blue-600/50 text-blue-300 border border-blue-500/40 px-3.5 py-2 rounded-lg text-xs flex items-center gap-2 whitespace-nowrap">
+            <i class="fa-solid fa-rotate"></i> Re-Query Explorer Intelligence
+          </button>
+        </div>
+
+        <!-- 4 Top Explorer Metric Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 my-4">
+          <div class="bg-slate-900 p-3.5 rounded-xl border border-slate-800">
+            <span class="text-xs text-slate-400">Global Composite Score (9 Indices)</span>
+            <div class="text-xl font-bold text-blue-400 mt-1" id="expScoreDisplay">--</div>
+            <div class="text-[10px] text-slate-500 mt-0.5" id="expBiasDisplay">Bias: --</div>
+          </div>
+          <div class="bg-slate-900 p-3.5 rounded-xl border border-slate-800">
+            <span class="text-xs text-slate-400">NIFTY 50 Projected Movement</span>
+            <div class="text-xl font-bold text-emerald-400 mt-1" id="expNiftyBias">--</div>
+            <div class="text-[10px] text-slate-500 mt-0.5" id="expNiftyRef">Quote: --</div>
+          </div>
+          <div class="bg-slate-900 p-3.5 rounded-xl border border-slate-800">
+            <span class="text-xs text-slate-400">BSE SENSEX Projected Movement</span>
+            <div class="text-xl font-bold text-indigo-400 mt-1" id="expSensexBias">--</div>
+            <div class="text-[10px] text-slate-500 mt-0.5" id="expSensexRef">Quote: --</div>
+          </div>
+          <div class="bg-slate-900 p-3.5 rounded-xl border border-slate-800">
+            <span class="text-xs text-slate-400">US-India 10Y Yield Spread</span>
+            <div class="text-xl font-bold text-amber-400 mt-1" id="expBondSpread">-- bps</div>
+            <div class="text-[10px] text-slate-500 mt-0.5" id="expBondSpreadNote">10Y Sovereign Spread</div>
+          </div>
+        </div>
+
+        <!-- SECTION 1: 15-DAY MOVEMENT VALIDATION BANNER (INDIAN VS GLOBAL BENCHMARKS) -->
+        <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-4 mb-4 text-xs space-y-2">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-2 border-b border-slate-800/80 pb-2">
+            <div class="font-bold text-blue-300 flex items-center gap-2">
+              <i class="fa-solid fa-chart-line text-blue-400"></i>
+              15-Day Movement Validation: Indian Indices (NIFTY & SENSEX) vs 9 Global Indices
+            </div>
+            <span id="expValidationStatusBadge" class="text-[10px] font-bold px-2.5 py-1 rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/30">
+              Validating...
+            </span>
+          </div>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-[11px] font-mono py-1">
+            <div class="bg-slate-950 p-2 rounded border border-slate-800/60">
+              <span class="text-slate-400 block text-[10px]">NIFTY 50 15D RETURN</span>
+              <span class="text-emerald-400 font-bold" id="expNifty15D">--%</span>
+            </div>
+            <div class="bg-slate-950 p-2 rounded border border-slate-800/60">
+              <span class="text-slate-400 block text-[10px]">SENSEX 15D RETURN</span>
+              <span class="text-emerald-400 font-bold" id="expSensex15D">--%</span>
+            </div>
+            <div class="bg-slate-950 p-2 rounded border border-slate-800/60">
+              <span class="text-slate-400 block text-[10px]">9 GLOBAL INDICES WEIGHTED 15D</span>
+              <span class="text-blue-400 font-bold" id="expGlobal15D">--%</span>
+            </div>
+            <div class="bg-slate-950 p-2 rounded border border-slate-800/60">
+              <span class="text-slate-400 block text-[10px]">DECOUPLING SPREAD</span>
+              <span class="text-amber-400 font-bold" id="expDecouplingSpread">--%</span>
+            </div>
+          </div>
+          <p class="text-slate-300 leading-relaxed text-[11px]" id="expValidationRationale">
+            Evaluating historical correlation and co-movement between Dalal Street and global bourses...
+          </p>
+        </div>
+
+        <!-- 9 Global Indices Table -->
+        <div class="mb-6">
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+              <i class="fa-solid fa-table-list text-blue-400"></i>
+              9 Global Indices Tracked (US, Europe & Asia)
+            </h3>
+            <span class="text-[11px] text-slate-500 font-mono">15D, 1W & 1D Historical Bars</span>
+          </div>
+          <div class="overflow-x-auto rounded-lg border border-slate-800">
+            <table class="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr class="bg-slate-900 text-slate-400 uppercase tracking-wider text-[10px] border-b border-slate-800">
+                  <th class="py-2.5 px-3">Global Index</th>
+                  <th class="py-2.5 px-3">Region / Country</th>
+                  <th class="py-2.5 px-3">Quote</th>
+                  <th class="py-2.5 px-3 text-right">1-Day %</th>
+                  <th class="py-2.5 px-3 text-right">1-Week %</th>
+                  <th class="py-2.5 px-3 text-right">15-Day %</th>
+                  <th class="py-2.5 px-3 text-center">15D Trend</th>
+                  <th class="py-2.5 px-3 text-center">Corr. (Nifty)</th>
+                  <th class="py-2.5 px-3 text-center">Macro Signal</th>
+                </tr>
+              </thead>
+              <tbody id="explorerIndicesTable" class="divide-y divide-slate-800 text-slate-200">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- SECTION 2: LEADING STOCK BROKER PREDICTIONS & EXPLORER VALIDATION -->
+        <div class="mb-6 bg-slate-900/60 rounded-xl p-4 border border-slate-800">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-3">
+            <div>
+              <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                <i class="fa-solid fa-bullhorn text-amber-400"></i>
+                Leading Stock Broker Predictions for SENSEX & NIFTY & Explorer Validation
+              </h3>
+              <p class="text-[11px] text-slate-400">
+                Synthesizing forecasts from 8 leading domestic and institutional brokerages with consensus support/resistance bands.
+              </p>
+            </div>
+            <div id="brokerValidationBadge" class="text-[10px] font-bold px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 whitespace-nowrap">
+              Validation: Assessing
+            </div>
+          </div>
+
+          <!-- Consensus Banner -->
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs mb-3">
+            <div class="bg-slate-950 p-2.5 rounded-lg border border-slate-800">
+              <span class="text-slate-400 text-[10px] block">Broker Consensus</span>
+              <span class="text-white font-bold text-sm" id="brokerConsensusDir">--</span>
+            </div>
+            <div class="bg-slate-950 p-2.5 rounded-lg border border-slate-800">
+              <span class="text-slate-400 text-[10px] block">NIFTY 50 Target</span>
+              <span class="text-emerald-400 font-bold text-sm" id="brokerNiftyTarget">--</span>
+              <span class="text-[10px] text-slate-500 block" id="brokerNiftyRange">Support: --</span>
+            </div>
+            <div class="bg-slate-950 p-2.5 rounded-lg border border-slate-800">
+              <span class="text-slate-400 text-[10px] block">SENSEX Target</span>
+              <span class="text-indigo-400 font-bold text-sm" id="brokerSensexTarget">--</span>
+              <span class="text-[10px] text-slate-500 block" id="brokerSensexRange">Range: --</span>
+            </div>
+            <div class="bg-slate-950 p-2.5 rounded-lg border border-slate-800">
+              <span class="text-slate-400 text-[10px] block">Explorer Alignment</span>
+              <span class="text-amber-300 font-bold text-xs" id="brokerAlignVerdict">--</span>
+            </div>
+          </div>
+          <div class="bg-slate-950/80 p-3 rounded-lg border border-slate-800/80 text-[11px] text-slate-300 mb-3" id="brokerValidationRationale">
+            Evaluating broker projections against 9 global index momentum...
+          </div>
+
+          <!-- Brokers Table -->
+          <div class="overflow-x-auto rounded-lg border border-slate-800">
+            <table class="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr class="bg-slate-900 text-slate-400 uppercase tracking-wider text-[10px] border-b border-slate-800">
+                  <th class="py-2.5 px-3">Brokerage House</th>
+                  <th class="py-2.5 px-3">Stance</th>
+                  <th class="py-2.5 px-3">Horizon</th>
+                  <th class="py-2.5 px-3 text-right">NIFTY Target</th>
+                  <th class="py-2.5 px-3 text-right">SENSEX Target</th>
+                  <th class="py-2.5 px-3">Broker Thesis / Key Catalysts</th>
+                </tr>
+              </thead>
+              <tbody id="brokersPredictionsTable" class="divide-y divide-slate-800 text-slate-200">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- SECTION 3: BENJAMIN GRAHAM VALUATION NORMS ASSESSMENT (30 STOCKS) -->
+        <div class="mb-6 bg-slate-900/60 rounded-xl p-4 border border-slate-800">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-2">
+            <div>
+              <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                <i class="fa-solid fa-calculator text-emerald-400"></i>
+                Benjamin Graham Valuation Norms Assessment (Top 10 Large, Mid & Small Caps)
+              </h3>
+              <p class="text-[11px] text-slate-400">
+                Rigorous value assessment applying Graham Number = &radic;(22.5 &times; EPS &times; BVPS), Graham Multiplier (P/E &times; P/B &le; 22.5), and Margin of Safety %.
+              </p>
+            </div>
+            <!-- Cap Tier Filter Buttons -->
+            <div class="flex items-center gap-1.5 bg-slate-950 p-1 rounded-lg border border-slate-800 text-xs">
+              <button onclick="switchGrahamTier('large_cap')" id="btnGrahamLarge" class="px-2.5 py-1 rounded bg-blue-600 text-white font-medium text-[11px] transition-all">Large Cap (10)</button>
+              <button onclick="switchGrahamTier('mid_cap')" id="btnGrahamMid" class="px-2.5 py-1 rounded text-slate-400 hover:text-white text-[11px] transition-all">Mid Cap (10)</button>
+              <button onclick="switchGrahamTier('small_cap')" id="btnGrahamSmall" class="px-2.5 py-1 rounded text-slate-400 hover:text-white text-[11px] transition-all">Small Cap (10)</button>
+            </div>
+          </div>
+
+          <!-- 3 Tier Summary Cards -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3 text-xs">
+            <div class="bg-slate-950 p-3 rounded-lg border border-slate-800">
+              <div class="flex justify-between items-center mb-1">
+                <span class="font-bold text-blue-300">Large Cap (Nifty 50 Tier)</span>
+                <span id="grahamPassLarge" class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300">-- Passes</span>
+              </div>
+              <div class="flex justify-between text-slate-400 text-[11px]">
+                <span>Avg P/E: <strong class="text-white" id="grahamLargePE">--</strong></span>
+                <span>Avg P/B: <strong class="text-white" id="grahamLargePB">--</strong></span>
+                <span>Frothy: <strong class="text-rose-400" id="grahamLargeFrothy">--</strong></span>
+              </div>
+            </div>
+            <div class="bg-slate-950 p-3 rounded-lg border border-slate-800">
+              <div class="flex justify-between items-center mb-1">
+                <span class="font-bold text-purple-300">Mid Cap (Nifty Midcap 150)</span>
+                <span id="grahamPassMid" class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300">-- Passes</span>
+              </div>
+              <div class="flex justify-between text-slate-400 text-[11px]">
+                <span>Avg P/E: <strong class="text-white" id="grahamMidPE">--</strong></span>
+                <span>Avg P/B: <strong class="text-white" id="grahamMidPB">--</strong></span>
+                <span>Frothy: <strong class="text-rose-400" id="grahamMidFrothy">--</strong></span>
+              </div>
+            </div>
+            <div class="bg-slate-950 p-3 rounded-lg border border-slate-800">
+              <div class="flex justify-between items-center mb-1">
+                <span class="font-bold text-amber-300">Small Cap (Nifty Smallcap 250)</span>
+                <span id="grahamPassSmall" class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300">-- Passes</span>
+              </div>
+              <div class="flex justify-between text-slate-400 text-[11px]">
+                <span>Avg P/E: <strong class="text-white" id="grahamSmallPE">--</strong></span>
+                <span>Avg P/B: <strong class="text-white" id="grahamSmallPB">--</strong></span>
+                <span>Frothy: <strong class="text-rose-400" id="grahamSmallFrothy">--</strong></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Graham Stocks Table -->
+          <div class="overflow-x-auto rounded-lg border border-slate-800">
+            <table class="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr class="bg-slate-900 text-slate-400 uppercase tracking-wider text-[10px] border-b border-slate-800">
+                  <th class="py-2.5 px-3">Symbol & Name</th>
+                  <th class="py-2.5 px-3">Sector</th>
+                  <th class="py-2.5 px-3 text-right">CMP (Rs.)</th>
+                  <th class="py-2.5 px-3 text-right">P/E</th>
+                  <th class="py-2.5 px-3 text-right">P/B</th>
+                  <th class="py-2.5 px-3 text-right">EPS / BVPS</th>
+                  <th class="py-2.5 px-3 text-right">Graham Number</th>
+                  <th class="py-2.5 px-3 text-right">P/E &times; P/B (&le;22.5)</th>
+                  <th class="py-2.5 px-3 text-right">Margin of Safety</th>
+                  <th class="py-2.5 px-3 text-center">Graham Verdict</th>
+                </tr>
+              </thead>
+              <tbody id="grahamStocksTable" class="divide-y divide-slate-800 text-slate-200">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- SECTION 4: GLOBAL CENTRAL BANKS & 10Y SOVEREIGN BOND MARKET -->
+        <div class="bg-slate-900/60 rounded-xl p-4 border border-slate-800">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-3">
+            <div>
+              <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                <i class="fa-solid fa-landmark text-cyan-400"></i>
+                Global Central Banks Policy Rates & 10Y Sovereign Bond Market
+              </h3>
+              <p class="text-[11px] text-slate-400">
+                Monitoring monetary policy stances (US Fed, RBI, ECB, BOJ, BOE, PBOC) and sovereign yield curves to predict foreign institutional capital flows.
+              </p>
+            </div>
+            <div class="text-[11px] font-mono text-cyan-300 bg-cyan-950/60 px-2.5 py-1 rounded border border-cyan-800/40" id="bondAssessmentTag">
+              Spread: --
+            </div>
+          </div>
+
+          <!-- Central Banks 6 Grid Cards -->
+          <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-2.5 mb-4 text-xs" id="centralBanksGrid">
+            <!-- Dynamically populated -->
+          </div>
+
+          <!-- 10Y Sovereign Bond Yields Table -->
+          <div class="overflow-x-auto rounded-lg border border-slate-800">
+            <table class="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr class="bg-slate-900 text-slate-400 uppercase tracking-wider text-[10px] border-b border-slate-800">
+                  <th class="py-2.5 px-3">Sovereign Benchmark (10Y)</th>
+                  <th class="py-2.5 px-3">Country / Region</th>
+                  <th class="py-2.5 px-3 text-right">Current Yield %</th>
+                  <th class="py-2.5 px-3 text-right">15-Day Chg (bps)</th>
+                  <th class="py-2.5 px-3">Flow Impact on Indian Markets</th>
+                </tr>
+              </thead>
+              <tbody id="bondYieldsTable" class="divide-y divide-slate-800 text-slate-200">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- TAB 4: GRIHALAXMI (NII DATABASE & 15D ROLLING COMPARISON) -->
+    <section id="pane-grihalaxmi" class="space-y-4 hidden">
+      <div class="agent-card rounded-xl p-5">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-3">
+          <div>
+            <h2 class="text-base font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-coins text-emerald-400"></i>
+              Agent 3: GrihaLaxmi - Net Institutional Investment (NII) Database & Sentinel
+            </h2>
+            <p class="text-xs text-slate-400">Persistent SQLite Database tracking daily FII & DII flows from 1st Jan 2023 to present.</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="triggerGrihaEODUpdate(this)" class="bg-blue-600/30 hover:bg-blue-600/50 text-blue-300 border border-blue-500/40 px-3 py-1.5 rounded-lg text-xs flex items-center gap-1.5">
+              <i class="fa-solid fa-database"></i> Sync EOD to Database
+            </button>
+            <button onclick="refreshGrihalaxmi(this)" class="bg-emerald-600/30 hover:bg-emerald-600/50 text-emerald-300 border border-emerald-500/40 px-3 py-1.5 rounded-lg text-xs flex items-center gap-1.5">
+              <i class="fa-solid fa-rotate"></i> Refresh Flow Feeds
+            </button>
+          </div>
+        </div>
+
+        <div class="bg-emerald-950/40 border border-emerald-800/50 p-4 rounded-xl mb-4 text-xs space-y-1.5">
+          <div class="font-bold text-emerald-400 flex items-center gap-2">
+            <i class="fa-solid fa-scale-balanced"></i> GrihaLaxmi Strategy Mandate & Rule Evaluation:
+          </div>
+          <p class="text-slate-300">
+            Compares the last 15 days cumulative Net Institutional Investment (NII = FII Net + DII Net) with the rolling 15 days cumulative investment database from 1st Jan 2023. If today's Cumulative NII value is less than the 15-day average of the Cumulative NIIs, GrihaLaxmi suggests investment in the stock market (Contrarian Accumulation).
+          </p>
+          <div class="pt-2 border-t border-emerald-800/40 flex flex-col md:flex-row md:items-center justify-between gap-2">
+            <div id="grihaRuleEvalBox" class="font-mono text-xs text-white">Status: Evaluating...</div>
+            <div class="text-[11px] text-slate-400 font-mono" id="grihaTradeDateBadge">Trade Date: --</div>
+          </div>
+        </div>
+
+        <!-- 4 Metric Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-5">
+          <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+            <span class="text-xs text-slate-400">Today's 15D Cum. NII (C<sub>t</sub>)</span>
+            <div class="text-lg font-bold text-emerald-400 mt-1" id="grihaToday15DCum">--</div>
+            <div class="text-[10px] text-slate-500 mt-0.5">Sum of last 15 trading days</div>
+          </div>
+          <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+            <span class="text-xs text-slate-400">15D Avg of Cum. NIIs (C̄<sub>t</sub>)</span>
+            <div class="text-lg font-bold text-amber-400 mt-1" id="griha15DAvgCum">--</div>
+            <div class="text-[10px] text-slate-500 mt-0.5">Moving average threshold</div>
+          </div>
+          <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+            <span class="text-xs text-slate-400">Historical Percentile (since Jan 2023)</span>
+            <div class="text-lg font-bold text-blue-400 mt-1" id="grihaPercentile">--%</div>
+            <div class="text-[10px] text-slate-500 mt-0.5" id="grihaPercentileZone">Accumulation Zone</div>
+          </div>
+          <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+            <span class="text-xs text-slate-400">SQLite Database Records</span>
+            <div class="text-lg font-bold text-purple-400 mt-1" id="grihaTotalDays">-- Days</div>
+            <div class="text-[10px] text-slate-500 mt-0.5">Jan 1, 2023 to Present</div>
+          </div>
+        </div>
+
+        <!-- Historical Benchmark Range Bar -->
+        <div class="bg-slate-900/80 p-3.5 rounded-xl border border-slate-800/80 mb-5 text-xs">
+          <div class="text-slate-400 font-semibold mb-2 flex items-center justify-between">
+            <span><i class="fa-solid fa-chart-line text-blue-400"></i> Rolling 15-Day Cumulative NII Historical Benchmarks (from 1st Jan 2023 to Present)</span>
+            <span class="text-[11px] font-mono text-emerald-400" id="grihaSpreadDisplay">Spread: --</span>
+          </div>
+          <div class="grid grid-cols-2 md:grid-cols-5 gap-2 text-center text-[11px] font-mono">
+            <div class="bg-slate-950 p-2 rounded border border-slate-800/60">
+              <span class="text-slate-500 block text-[10px]">HISTORICAL MIN</span>
+              <span class="text-rose-400 font-bold" id="histMin">--</span>
+            </div>
+            <div class="bg-slate-950 p-2 rounded border border-slate-800/60">
+              <span class="text-slate-500 block text-[10px]">25th PERCENTILE</span>
+              <span class="text-amber-400 font-bold" id="histP25">--</span>
+            </div>
+            <div class="bg-slate-950 p-2 rounded border border-slate-800/60">
+              <span class="text-slate-500 block text-[10px]">MEDIAN (50th)</span>
+              <span class="text-blue-400 font-bold" id="histMedian">--</span>
+            </div>
+            <div class="bg-slate-950 p-2 rounded border border-slate-800/60">
+              <span class="text-slate-500 block text-[10px]">75th PERCENTILE</span>
+              <span class="text-emerald-400 font-bold" id="histP75">--</span>
+            </div>
+            <div class="bg-slate-950 p-2 rounded border border-slate-800/60">
+              <span class="text-slate-500 block text-[10px]">HISTORICAL MAX</span>
+              <span class="text-purple-400 font-bold" id="histMax">--</span>
+            </div>
+          </div>
+        </div>
+
+        <h3 class="text-xs font-bold text-slate-300 mb-2 uppercase tracking-wider">15-Day Daily Series (Rs. Crores)</h3>
+        <div class="overflow-x-auto max-h-72 overflow-y-auto">
+          <table class="w-full text-left text-xs border-collapse">
+            <thead>
+              <tr class="bg-slate-900 text-slate-400 sticky top-0 uppercase tracking-wider text-[11px] border-b border-slate-800">
+                <th class="py-2.5 px-3">Date</th>
+                <th class="py-2.5 px-3">FII Net (Rs. Cr)</th>
+                <th class="py-2.5 px-3">DII Net (Rs. Cr)</th>
+                <th class="py-2.5 px-3">Combined Net Flow</th>
+              </tr>
+            </thead>
+            <tbody id="grihaDailyTable" class="divide-y divide-slate-800 text-slate-200">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 5: SAFETYPRIYA (MUTUAL FUNDS & FDs) -->
+    <section id="pane-safetypriya" class="space-y-4 hidden">
+      <div class="agent-card rounded-xl p-5">
+        <div class="flex items-center justify-between mb-2">
+          <h2 class="text-base font-bold text-white flex items-center gap-2">
+            <i class="fa-solid fa-shield text-purple-400"></i>
+            Agent 4: SafetyPriya - Mutual Funds (ICICI, Kotak, Tata, JioBlackRock, HDFC) & Fixed Deposits
+          </h2>
+          <button onclick="refreshSafety(this)" class="bg-purple-600/30 hover:bg-purple-600/50 text-purple-300 border border-purple-500/40 px-3 py-1.5 rounded-lg text-xs flex items-center gap-1.5">
+            <i class="fa-solid fa-rotate"></i> Refresh NAVs
+          </button>
+        </div>
+        <p class="text-xs text-slate-400 mb-4" id="safetySummaryText">Assesses 15-Day and 1-Week NAV movements across Equity, Debt, Hybrid, and Liquid portfolios vs Bank FD hurdle rates.</p>
+
+        <h3 class="text-xs font-bold text-purple-400 mb-3 uppercase tracking-wider">Top Mutual Fund Performers Across Mandated Categories</h3>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6" id="safetyPicksGrid">
+          <!-- Dynamically Populated -->
+        </div>
+
+        <h3 class="text-xs font-bold text-amber-400 mb-3 uppercase tracking-wider">Benchmark Bank Fixed Deposit Rates in India</h3>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs border-collapse">
+            <thead>
+              <tr class="bg-slate-900 text-slate-400 uppercase tracking-wider text-[11px] border-b border-slate-800">
+                <th class="py-3 px-3">Bank / Institution</th>
+                <th class="py-3 px-3">Tenure Window</th>
+                <th class="py-3 px-3">General Public Rate</th>
+                <th class="py-3 px-3">Senior Citizen Rate</th>
+                <th class="py-3 px-3">Safety Rating</th>
+              </tr>
+            </thead>
+            <tbody id="safetyFDTable" class="divide-y divide-slate-800 text-slate-200">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 6: STOCKBULL (100% EQUITIES ADVOCATE) -->
+    <section id="pane-stockbull" class="space-y-4 hidden">
+      <div class="agent-card rounded-xl p-5 border border-emerald-500/30">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-4">
+          <div>
+            <div class="flex items-center gap-2 mb-1">
+              <span class="text-xs px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/30">
+                Buddhiman Sub-Agent • Equities
+              </span>
+              <span class="text-xs text-slate-400 font-mono">100% Fund Deployment Pitch</span>
+            </div>
+            <h2 class="text-base font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-arrow-trend-up text-emerald-400"></i>
+              StockBull - The Equity Maximalist & High-Growth Strategist
+            </h2>
+            <p class="text-xs text-slate-400" id="stockBullMandate">Advocates 100% Stock Deployment & Selects Top Capital Appreciation Equities</p>
+          </div>
+          <button onclick="refreshStockBull(this)" class="bg-emerald-600/30 hover:bg-emerald-600/50 text-emerald-300 border border-emerald-500/40 px-3 py-1.5 rounded-lg text-xs flex items-center gap-1.5 whitespace-nowrap">
+            <i class="fa-solid fa-rotate"></i> Re-Evaluate Equities
+          </button>
+        </div>
+
+        <!-- Executive Summary Banner -->
+        <div class="bg-emerald-950/40 border border-emerald-800/40 rounded-xl p-4 mb-4">
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-xs font-bold text-emerald-300 uppercase tracking-wider">Advocate Pitch Summary</span>
+            <span class="text-xs font-mono text-emerald-400 font-bold">Expected Portfolio CAGR: 18% - 24% p.a.</span>
+          </div>
+          <p class="text-xs text-slate-200 leading-relaxed" id="stockBullFullSummary">--</p>
+        </div>
+
+        <!-- 5 Core Arguments Grid -->
+        <h3 class="text-xs font-bold text-emerald-400 mb-2 uppercase tracking-wider flex items-center gap-1.5">
+          <i class="fa-solid fa-shield-halved"></i> 5 Core Empirical Arguments for 100% Stock Deployment
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-3 mb-6" id="stockBullArgumentsGrid">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- Curated 5 Stocks Table -->
+        <div class="flex items-center justify-between mb-2">
+          <h3 class="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
+            <i class="fa-solid fa-table-list text-emerald-400"></i> Curated 5 Best Appreciation Stocks (100% Fund Split)
+          </h3>
+          <span class="text-[11px] text-slate-400 font-mono">Strict Weight Sum: 100%</span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs border-collapse">
+            <thead>
+              <tr class="bg-slate-900 text-slate-400 uppercase tracking-wider text-[11px] border-b border-slate-800">
+                <th class="py-3 px-3">#</th>
+                <th class="py-3 px-3">Symbol</th>
+                <th class="py-3 px-3">Company</th>
+                <th class="py-3 px-3">Sector</th>
+                <th class="py-3 px-3 text-right">Alloc Weight</th>
+                <th class="py-3 px-3 text-right">Ref Price</th>
+                <th class="py-3 px-3 text-right">Target Upside</th>
+                <th class="py-3 px-3">Horizon</th>
+                <th class="py-3 px-3">Conviction</th>
+                <th class="py-3 px-3">Key Appreciation Thesis</th>
+              </tr>
+            </thead>
+            <tbody id="stockBullPicksTable" class="divide-y divide-slate-800 text-slate-200">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 7: MFHUSSAIN (100% MUTUAL FUNDS ADVOCATE) -->
+    <section id="pane-mfhussain" class="space-y-4 hidden">
+      <div class="agent-card rounded-xl p-5 border border-blue-500/30">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-4">
+          <div>
+            <div class="flex items-center gap-2 mb-1">
+              <span class="text-xs px-2.5 py-0.5 rounded-full bg-blue-500/20 text-blue-300 font-bold border border-blue-500/30">
+                Buddhiman Sub-Agent • Mutual Funds
+              </span>
+              <span class="text-xs text-slate-400 font-mono">100% Fund Deployment Pitch</span>
+            </div>
+            <h2 class="text-base font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-palette text-blue-400"></i>
+              MFHussain - The Mutual Fund Portfolio Architect
+            </h2>
+            <p class="text-xs text-slate-400" id="mfHussainMandate">Advocates 100% Mutual Funds Deployment across 5 Best Performing MFs with Bright Future Potential</p>
+          </div>
+          <button onclick="refreshMFHussain(this)" class="bg-blue-600/30 hover:bg-blue-600/50 text-blue-300 border border-blue-500/40 px-3 py-1.5 rounded-lg text-xs flex items-center gap-1.5 whitespace-nowrap">
+            <i class="fa-solid fa-rotate"></i> Re-Evaluate MFs
+          </button>
+        </div>
+
+        <!-- Executive Summary Banner -->
+        <div class="bg-blue-950/40 border border-blue-800/40 rounded-xl p-4 mb-4">
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-xs font-bold text-blue-300 uppercase tracking-wider">Advocate Pitch Summary</span>
+            <span class="text-xs font-mono text-blue-400 font-bold">Expected Portfolio Return: 14% - 17% p.a. (Controlled Drawdowns)</span>
+          </div>
+          <p class="text-xs text-slate-200 leading-relaxed" id="mfHussainFullSummary">--</p>
+        </div>
+
+        <!-- 5 Core Arguments Grid -->
+        <h3 class="text-xs font-bold text-blue-400 mb-2 uppercase tracking-wider flex items-center gap-1.5">
+          <i class="fa-solid fa-shapes"></i> 5 Core Empirical Arguments for 100% Mutual Funds Deployment
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-3 mb-6" id="mfHussainArgumentsGrid">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- Curated 5 Mutual Funds Table -->
+        <div class="flex items-center justify-between mb-2">
+          <h3 class="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
+            <i class="fa-solid fa-table-list text-blue-400"></i> 5 Curated Best Performing MFs with Bright Future Potential (100% Split)
+          </h3>
+          <span class="text-[11px] text-slate-400 font-mono">Strict Weight Sum: 100%</span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs border-collapse">
+            <thead>
+              <tr class="bg-slate-900 text-slate-400 uppercase tracking-wider text-[11px] border-b border-slate-800">
+                <th class="py-3 px-3">#</th>
+                <th class="py-3 px-3">Scheme Name</th>
+                <th class="py-3 px-3">AMC</th>
+                <th class="py-3 px-3">Category</th>
+                <th class="py-3 px-3 text-right">Alloc Weight</th>
+                <th class="py-3 px-3 text-right">Current NAV</th>
+                <th class="py-3 px-3 text-right">15D Ret</th>
+                <th class="py-3 px-3 text-right">1W Ret</th>
+                <th class="py-3 px-3">Risk Profile</th>
+                <th class="py-3 px-3">Future Potential Thesis</th>
+              </tr>
+            </thead>
+            <tbody id="mfHussainPicksTable" class="divide-y divide-slate-800 text-slate-200">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 8: FDLOVER (100% FIXED DEPOSITS & BONDS ADVOCATE) -->
+    <section id="pane-fdlover" class="space-y-4 hidden">
+      <div class="agent-card rounded-xl p-5 border border-amber-500/30">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-4">
+          <div>
+            <div class="flex items-center gap-2 mb-1">
+              <span class="text-xs px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-bold border border-amber-500/30">
+                Buddhiman Sub-Agent • Fixed Income
+              </span>
+              <span class="text-xs text-slate-400 font-mono">100% Fund Deployment Pitch</span>
+            </div>
+            <h2 class="text-base font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-lock text-amber-400"></i>
+              FDLover - Capital Preservation Champion & Fixed Income Strategist
+            </h2>
+            <p class="text-xs text-slate-400" id="fdLoverMandate">Scouts Best FDs & Corporate Bonds; Splits 100% of Funds across Maximum 5 Best Options</p>
+          </div>
+          <button onclick="refreshFDLover(this)" class="bg-amber-600/30 hover:bg-amber-600/50 text-amber-300 border border-amber-500/40 px-3 py-1.5 rounded-lg text-xs flex items-center gap-1.5 whitespace-nowrap">
+            <i class="fa-solid fa-rotate"></i> Re-Scout Fixed Income
+          </button>
+        </div>
+
+        <!-- Executive Summary Banner -->
+        <div class="bg-amber-950/40 border border-amber-800/40 rounded-xl p-4 mb-4">
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-xs font-bold text-amber-300 uppercase tracking-wider">Advocate Pitch Summary</span>
+            <span class="text-xs font-mono text-amber-400 font-bold" id="fdLoverBlendedYieldBanner">Blended Annual Yield: 8.03% p.a. (8.28% Seniors)</span>
+          </div>
+          <p class="text-xs text-slate-200 leading-relaxed" id="fdLoverFullSummary">--</p>
+        </div>
+
+        <!-- 5 Core Arguments Grid -->
+        <h3 class="text-xs font-bold text-amber-400 mb-2 uppercase tracking-wider flex items-center gap-1.5">
+          <i class="fa-solid fa-vault"></i> 5 Core Empirical Arguments for 100% Fixed Deposits & AAA Corporate Bonds
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-3 mb-6" id="fdLoverArgumentsGrid">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- Curated 5 FD & Bond Options Table -->
+        <div class="flex items-center justify-between mb-2">
+          <h3 class="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
+            <i class="fa-solid fa-table-list text-amber-400"></i> Top 5 Scouted Fixed Income & Corporate Bond Options (100% Split)
+          </h3>
+          <span class="text-[11px] text-slate-400 font-mono">Max 5 Options • Strict Weight Sum: 100%</span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs border-collapse">
+            <thead>
+              <tr class="bg-slate-900 text-slate-400 uppercase tracking-wider text-[11px] border-b border-slate-800">
+                <th class="py-3 px-3">#</th>
+                <th class="py-3 px-3">Issuer / Institution</th>
+                <th class="py-3 px-3">Instrument Type</th>
+                <th class="py-3 px-3">Credit Rating</th>
+                <th class="py-3 px-3">Tenure Window</th>
+                <th class="py-3 px-3 text-right">General Rate</th>
+                <th class="py-3 px-3 text-right">Senior Rate</th>
+                <th class="py-3 px-3 text-right">Alloc Weight</th>
+                <th class="py-3 px-3">Safety & Sovereign Rationale</th>
+              </tr>
+            </thead>
+            <tbody id="fdLoverPicksTable" class="divide-y divide-slate-800 text-slate-200">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 9: CHITRAGUPTHAN (SIMULATION LEDGER AGENT) -->
+    <section id="pane-chitragupthan" class="space-y-4 hidden">
+      <div class="agent-card rounded-xl p-5 border border-purple-500/30">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-4">
+          <div>
+            <div class="flex items-center gap-2 mb-1">
+              <span class="text-xs px-2.5 py-0.5 rounded-full bg-purple-500/20 text-purple-300 font-bold border border-purple-500/30">
+                Simulation & Ledger Agent &bull; Performance Auditor
+              </span>
+              <span class="text-xs text-slate-400 font-mono">Prediction Date vs Current Value Tracker</span>
+            </div>
+            <h2 class="text-base font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-scroll text-purple-400"></i>
+              Chitragupthan - Celestial Portfolio Auditor & Simulation Ledger Agent
+            </h2>
+            <p class="text-xs text-slate-400">
+              Audits investment predictions across prediction dates. Tracks Fund Values chosen on Prediction Dates, Current Market Valuations, and Exact % Changes.
+            </p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="openChitragupthanSimulation()" class="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold text-xs px-4 py-2 rounded-lg flex items-center gap-2 shadow-lg shadow-purple-600/30 transition-all">
+              <i class="fa-solid fa-arrow-up-right-from-square text-amber-300"></i>
+              <span>Open in New Window</span>
+            </button>
+            <button onclick="refreshChitragupthanTab(this)" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-3 py-2 rounded-lg text-xs flex items-center gap-1.5 whitespace-nowrap">
+              <i class="fa-solid fa-rotate"></i> Refresh Ledger
+            </button>
+          </div>
+        </div>
+
+        <!-- Embedded Simulation Container -->
+        <div id="chitragupthanPaneContainer" class="space-y-6">
+          <div class="p-8 text-center text-slate-400">
+            <i class="fa-solid fa-spinner fa-spin text-2xl text-purple-400 mb-2"></i>
+            <p class="text-xs">Loading Chitragupthan prediction tables...</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 10: SARATHY (QUALITY ASSESSOR, WEB SCOUT & CONTINUOUS IMPROVEMENT DRIVER) -->
+    <section id="pane-sarathy" class="space-y-6 hidden">
+      <!-- Agent Mandate Header Card -->
+      <div class="agent-card rounded-xl p-5 border border-cyan-500/30">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-4">
+          <div>
+            <div class="flex items-center gap-2 mb-1">
+              <span class="text-xs px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 font-bold border border-cyan-500/30">
+                Strategic Assessor &bull; Web Intelligence Scout &bull; Quality Auditor
+              </span>
+              <span class="text-xs text-slate-400 font-mono">Friday Prediction Auditor vs Actual Simulation</span>
+            </div>
+            <h2 class="text-base font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-compass text-cyan-400"></i>
+              Sarathy - Strategic Quality Assessor, Web Scout & Feedback Loop Driver
+            </h2>
+            <p class="text-xs text-slate-400" id="sarathyMandateText">
+              Audits Friday Predictions vs Actual Simulation, Scouts Monday Web Intelligence & Technicals, and Directs Viswakarma to Upgrade Buddhiman, MFHussain, FDLover & StockBull for Next Friday.
+            </p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="refreshSarathyTab(this)" class="bg-cyan-600 hover:bg-cyan-500 text-white font-medium text-xs px-4 py-2 rounded-lg flex items-center gap-2 shadow-lg shadow-cyan-600/30 transition-all">
+              <i class="fa-solid fa-rotate"></i>
+              <span>Refresh Sarathy Audit & Scout</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Metric KPI Cards Banner -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+          <div class="bg-slate-900/80 p-3 rounded-lg border border-slate-800">
+            <span class="text-xs text-slate-400">Avg Tracking Variance</span>
+            <div class="text-xl font-bold text-cyan-400" id="sarathyAvgVariance">--%</div>
+            <div class="text-[10px] text-slate-400 mt-1">vs Projected Target Run-Rate</div>
+          </div>
+          <div class="bg-slate-900/80 p-3 rounded-lg border border-slate-800">
+            <span class="text-xs text-slate-400">Picks Performance Audit</span>
+            <div class="text-xl font-bold text-emerald-400" id="sarathyPicksStatus">--</div>
+            <div class="text-[10px] text-slate-400 mt-1" id="sarathyPicksSub">Outperforming / Lagging</div>
+          </div>
+          <div class="bg-slate-900/80 p-3 rounded-lg border border-slate-800">
+            <span class="text-xs text-slate-400">Monday Nifty Technicals</span>
+            <div class="text-xl font-bold text-amber-400" id="sarathyNiftySupport">--</div>
+            <div class="text-[10px] text-slate-400 mt-1" id="sarathyNiftyResistance">Key Support / Resistance</div>
+          </div>
+          <div class="bg-slate-900/80 p-3 rounded-lg border border-slate-800">
+            <span class="text-xs text-slate-400">Delegated Engineer</span>
+            <div class="text-xl font-bold text-orange-400">Viswakarma</div>
+            <div class="text-[10px] text-emerald-400 mt-1 font-mono">Work Order Certified</div>
+          </div>
+        </div>
+
+        <!-- Executive Summary Banner -->
+        <p class="text-xs text-slate-300 leading-relaxed bg-slate-900/60 p-3.5 rounded-lg border border-slate-800/60" id="sarathySummaryText">
+          Loading Sarathy strategic audit & web intelligence report...
+        </p>
+      </div>
+
+      <!-- SECTION 1: SIMULATION AUDIT VS PROJECTED TARGET RUN-RATES -->
+      <div class="agent-card rounded-xl p-5 border border-slate-800">
+        <div class="flex items-center justify-between mb-3">
+          <div>
+            <h3 class="text-sm font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-chart-line text-cyan-400"></i>
+              Friday Recommendations Audit vs Projected Target Run-Rates
+            </h3>
+            <p class="text-xs text-slate-400">
+              Evaluates Chitragupthan simulated returns against baseline target upside projected during Friday prediction (+22% to +28% annualized for stocks, +14% to +17% for MFs, 8.60% for FDs).
+            </p>
+          </div>
+          <span class="text-xs font-mono text-cyan-400 bg-cyan-950/60 px-2.5 py-1 rounded border border-cyan-800/50">
+            Audit Cadence: Every Monday
+          </span>
+        </div>
+        <div id="sarathyAuditTablesContainer" class="space-y-4">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- SECTION 2: MONDAY WEB INTELLIGENCE - 5 SPECIALIZED PORTALS -->
+      <div class="agent-card rounded-xl p-5 border border-slate-800">
+        <div class="flex items-center justify-between mb-3">
+          <div>
+            <h3 class="text-sm font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-globe text-blue-400"></i>
+              Monday Web Intelligence: 5 Specialized Financial Portals Scouted
+            </h3>
+            <p class="text-xs text-slate-400">
+              Sarathy scouts these trusted institutional & retail portals every Monday to extract fresh data signals and feed them to the respective council agents.
+            </p>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-3" id="sarathyWebsitesGrid">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- SECTION 3: MONDAY MARKET CUES & NIFTY 50 TECHNICAL SETUP -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Market Cues Card -->
+        <div class="agent-card rounded-xl p-5 border border-slate-800 space-y-3">
+          <h3 class="text-sm font-bold text-white flex items-center gap-2">
+            <i class="fa-solid fa-tower-broadcast text-amber-400"></i>
+            Monday Market Cues & Derivative Sentinel
+          </h3>
+          <div class="space-y-2 text-xs" id="sarathyMarketCuesContainer">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <!-- Technical Analysis Setup Card -->
+        <div class="agent-card rounded-xl p-5 border border-slate-800 space-y-3">
+          <h3 class="text-sm font-bold text-white flex items-center gap-2">
+            <i class="fa-solid fa-chart-candlestick text-emerald-400"></i>
+            Major Published Technical Analysis (NIFTY 50)
+          </h3>
+          <div class="space-y-2 text-xs" id="sarathyTechnicalSetupContainer">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION 4: FORMULATED IMPROVEMENT DIRECTIVES FOR 4 AGENTS -->
+      <div class="agent-card rounded-xl p-5 border border-indigo-500/30">
+        <div class="flex items-center justify-between mb-3">
+          <div>
+            <h3 class="text-sm font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-file-signature text-indigo-400"></i>
+              Sarathy Improvement Directives Delegated to Viswakarma
+            </h3>
+            <p class="text-xs text-slate-400">
+              Actionable engineering requirements dispatched to Engineer Agent Viswakarma to modify StockBull, MFHussain, FDLover, and Buddhiman.
+            </p>
+          </div>
+          <span class="text-xs px-2.5 py-1 rounded bg-indigo-500/20 text-indigo-300 font-mono font-bold">
+            Target Cycle: Next Friday (16 Oct 2026)
+          </span>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="sarathyDirectivesGrid">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 11: VISWAKARMA (LEAD SYSTEMS ENGINEER & AGENT ARCHITECT) -->
+    <section id="pane-viswakarma" class="space-y-6 hidden">
+      <!-- Agent Mandate Header Card -->
+      <div class="agent-card rounded-xl p-5 border border-orange-500/30">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-4">
+          <div>
+            <div class="flex items-center gap-2 mb-1">
+              <span class="text-xs px-2.5 py-0.5 rounded-full bg-orange-500/20 text-orange-300 font-bold border border-orange-500/30">
+                Lead Systems Engineer &bull; Autonomous Agent Architect &bull; Code Modifying Agent
+              </span>
+              <span class="text-xs text-slate-400 font-mono">Registry: data_engine/viswakarma_registry.json</span>
+            </div>
+            <h2 class="text-base font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-hammer text-orange-400"></i>
+              Viswakarma - Lead Systems Engineer & Autonomous Agent Architect
+            </h2>
+            <p class="text-xs text-slate-400" id="viswakarmaMandateText">
+              Engineers, Patches, and Deploys Sarathy's Directives into Buddhiman, MFHussain, FDLover & StockBull for the Upcoming Friday Recommendation Cycle.
+            </p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="refreshViswakarmaTab(this)" class="bg-orange-600 hover:bg-orange-500 text-white font-medium text-xs px-4 py-2 rounded-lg flex items-center gap-2 shadow-lg shadow-orange-600/30 transition-all">
+              <i class="fa-solid fa-rotate"></i>
+              <span>Refresh Viswakarma Diagnostics</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Architectural Deployment Status Banner -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+          <div class="bg-slate-900/80 p-3 rounded-lg border border-slate-800">
+            <span class="text-xs text-slate-400">Architecture Version</span>
+            <div class="text-xl font-bold text-orange-400 font-mono" id="viswakarmaVersion">v2.1</div>
+            <div class="text-[10px] text-emerald-400 mt-1 flex items-center gap-1">
+              <i class="fa-solid fa-shield-check"></i> Certified Baseline
+            </div>
+          </div>
+          <div class="bg-slate-900/80 p-3 rounded-lg border border-slate-800">
+            <span class="text-xs text-slate-400">Deployment Status</span>
+            <div class="text-xl font-bold text-emerald-400" id="viswakarmaStatus">ACTIVE</div>
+            <div class="text-[10px] text-slate-400 mt-1">4 of 4 Agents Patched</div>
+          </div>
+          <div class="bg-slate-900/80 p-3 rounded-lg border border-slate-800">
+            <span class="text-xs text-slate-400">Target Friday Cycle</span>
+            <div class="text-xl font-bold text-amber-300 font-mono text-sm mt-1" id="viswakarmaNextFriday">16 Oct 2026</div>
+            <div class="text-[10px] text-slate-400 mt-0.5">Recommendation Date</div>
+          </div>
+          <div class="bg-slate-900/80 p-3 rounded-lg border border-slate-800">
+            <span class="text-xs text-slate-400">Action Execution Date</span>
+            <div class="text-xl font-bold text-emerald-400 font-mono text-sm mt-1" id="viswakarmaMondayImpl">19 Oct 2026</div>
+            <div class="text-[10px] text-slate-400 mt-0.5">Market Opening Monday</div>
+          </div>
+        </div>
+
+        <p class="text-xs text-slate-300 leading-relaxed bg-slate-900/60 p-3.5 rounded-lg border border-slate-800/60" id="viswakarmaSummaryText">
+          Viswakarma autonomous engineering engine active. Sarathy's directives have been compiled, verified, and patched into all 4 agents.
+        </p>
+      </div>
+
+      <!-- SECTION 1: 4 ACTIVE ARCHITECTURAL PATCHES -->
+      <div>
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-sm font-bold text-white flex items-center gap-2">
+            <i class="fa-solid fa-microchip text-orange-400"></i>
+            Active Architectural Engineering Patches Deployed Across 4 Agents
+          </h3>
+          <span class="text-xs text-slate-400 font-mono">Live In-Memory & Registry Hooks</span>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="viswakarmaPatchesGrid">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- SECTION 2: WORK ORDER DISPATCH & VERIFICATION LOG -->
+      <div class="agent-card rounded-xl p-5 border border-slate-800">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-sm font-bold text-white flex items-center gap-2">
+            <i class="fa-solid fa-list-check text-emerald-400"></i>
+            Delegated Work Order Execution Ledger & Verification Checkpoints
+          </h3>
+          <span class="text-xs px-2.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold font-mono">
+            100% Tests Passing
+          </span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs border-collapse">
+            <thead>
+              <tr class="bg-slate-950 text-slate-400 uppercase tracking-wider text-[10px] border-b border-slate-800 font-mono">
+                <th class="py-2.5 px-3">Work Order ID</th>
+                <th class="py-2.5 px-3">Target Agent</th>
+                <th class="py-2.5 px-3">Enhancement Module</th>
+                <th class="py-2.5 px-3">Scouted Source Injected</th>
+                <th class="py-2.5 px-3 text-center">Status</th>
+                <th class="py-2.5 px-3">Target Friday Release</th>
+              </tr>
+            </thead>
+            <tbody id="viswakarmaLedgerTable" class="divide-y divide-slate-800 text-slate-200 font-mono text-[11px]">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="py-4 px-6 text-center text-xs text-slate-500 border-t border-slate-800">
+    Multi-Agent Indian Fund Deployment Advisory System • Operating on Port 8010 • Friday-to-Monday Execution Cadence
+  </footer>
+
+  <!-- Frontend Logic -->
+  <script>
+    let synthesisData = null;
+    let currentGrahamTier = 'large_cap';
+    let cachedGrahamData = null;
+
+    function showToast(msg, isSuccess = true) {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toastMsg');
+      const toastIcon = document.getElementById('toastIcon');
+      toastMsg.innerText = msg;
+      toastIcon.className = isSuccess ? 'fa-solid fa-circle-check text-emerald-400' : 'fa-solid fa-triangle-exclamation text-rose-400';
+      toast.classList.remove('hidden');
+      setTimeout(() => toast.classList.add('hidden'), 4000);
+    }
+
+    function openChitragupthanSimulation() {
+      const capitalInput = document.getElementById('inputCapital');
+      const capital = capitalInput ? capitalInput.value : 100000;
+      const url = `/simulate?capital=${encodeURIComponent(capital)}`;
+      const simWin = window.open(url, 'ChitragupthanSimulationWindow', 'width=1240,height=880,menubar=no,toolbar=no,location=no,status=no,resizable=yes,scrollbars=yes');
+      if (simWin) {
+        simWin.focus();
+        showToast('Chitragupthan simulation opened in a new window!', true);
+      } else {
+        // Fallback if popup blocker intercepts
+        window.open(url, '_blank');
+      }
+    }
+
+    function switchTab(tabId) {
+      const tabs = ['buddhiman', 'jasoos', 'explorer', 'grihalaxmi', 'safetypriya', 'stockbull', 'mfhussain', 'fdlover', 'chitragupthan', 'sarathy', 'viswakarma'];
+      tabs.forEach(t => {
+        const btn = document.getElementById('tab-' + t);
+        const pane = document.getElementById('pane-' + t);
+        if (t === tabId) {
+          btn.className = 'tab-btn tab-active px-4 py-2 rounded-lg transition-all flex items-center gap-2';
+          if (pane) pane.classList.remove('hidden');
+          if (t === 'chitragupthan') {
+            loadChitragupthanTab();
+          } else if (t === 'sarathy') {
+            loadSarathyTab();
+          } else if (t === 'viswakarma') {
+            loadViswakarmaTab();
+          }
+        } else {
+          btn.className = 'tab-btn px-4 py-2 rounded-lg bg-slate-900 text-slate-400 hover:text-white transition-all flex items-center gap-2';
+          if (pane) pane.classList.add('hidden');
+        }
+      });
+    }
+
+    function setCapitalPreset(amount) {
+      document.getElementById('inputCapital').value = amount;
+      updateAllocationAmounts();
+    }
+
+    async function updateAllocationAmounts() {
+      const capital = parseFloat(document.getElementById('inputCapital').value) || 100000;
+      try {
+        const res = await fetch('/api/calculate-allocation', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ capital: capital })
+        });
+        const data = await res.json();
+        renderFivePicks(data.picks);
+
+        // Update Rupee amounts on the Allocation Matrix cards
+        if (data.category_allocations) {
+          const ca = data.category_allocations;
+          const elStocks = document.getElementById('allocStocksAmt');
+          const elMFs = document.getElementById('allocMFsAmt');
+          const elETFs = document.getElementById('allocETFsAmt');
+          const elFDs = document.getElementById('allocFDsAmt');
+
+          if (elStocks && ca.Stocks) elStocks.innerText = `Rs. ${ca.Stocks.rupees.toLocaleString('en-IN')}`;
+          if (elMFs && ca.Mutual_Funds) elMFs.innerText = `Rs. ${ca.Mutual_Funds.rupees.toLocaleString('en-IN')}`;
+          if (elETFs && ca.ETFs) elETFs.innerText = `Rs. ${ca.ETFs.rupees.toLocaleString('en-IN')}`;
+          if (elFDs && ca.Fixed_Deposits) elFDs.innerText = `Rs. ${ca.Fixed_Deposits.rupees.toLocaleString('en-IN')}`;
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    async function runSynthesis() {
+      const icon = document.getElementById('syncIcon');
+      icon.classList.add('fa-spin');
+      try {
+        const res = await fetch('/api/synthesize?refresh=true');
+        synthesisData = await res.json();
+        renderAll(synthesisData);
+        await updateAllocationAmounts();
+        showToast('Multi-Agent Friday Synthesis completed!');
+      } catch (e) {
+        showToast('Error executing synthesis: ' + e, false);
+      } finally {
+        icon.classList.remove('fa-spin');
+      }
+    }
+
+    function setBtnLoading(btn, loading) {
+      if (!btn) return;
+      const icon = btn.querySelector('i');
+      if (loading) {
+        btn.disabled = true;
+        btn.classList.add('opacity-70', 'cursor-not-allowed');
+        if (icon) icon.classList.add('fa-spin');
+      } else {
+        btn.disabled = false;
+        btn.classList.remove('opacity-70', 'cursor-not-allowed');
+        if (icon) icon.classList.remove('fa-spin');
+      }
+    }
+
+    async function refreshJasoos(btn) {
+      setBtnLoading(btn, true);
+      try {
+        const res = await fetch('/api/agent/jasoos?refresh=true');
+        if (!res.ok) throw new Error(`HTTP ${res.status}: ${await res.text()}`);
+        const data = await res.json();
+        if (data.all_15_stocks) renderJasoosTable(data.all_15_stocks);
+        if (data.summary) {
+          const el = document.getElementById('jasoosSummaryText');
+          if (el) el.innerText = data.summary;
+        }
+        if (data.total_block_deals_scanned) {
+          const elDeals = document.getElementById('jasoosTotalDeals');
+          if (elDeals) elDeals.innerText = `${data.total_block_deals_scanned} Deals`;
+        }
+        if (data.total_market_block_value_cr) {
+          const elMktVal = document.getElementById('jasoosMarketBlockVal');
+          if (elMktVal) elMktVal.innerText = `Rs. ${data.total_market_block_value_cr.toLocaleString('en-IN', {minimumFractionDigits: 1, maximumFractionDigits: 1})} Cr`;
+        }
+        if (data.top_15_deal_value_cr) {
+          const elTop15Val = document.getElementById('jasoosTop15Val');
+          if (elTop15Val) elTop15Val.innerText = `Rs. ${data.top_15_deal_value_cr.toLocaleString('en-IN', {minimumFractionDigits: 1, maximumFractionDigits: 1})} Cr`;
+        }
+        if (data.largest_single_deal_cr) {
+          const elLargest = document.getElementById('jasoosLargestDeal');
+          if (elLargest) elLargest.innerText = `Rs. ${data.largest_single_deal_cr.toLocaleString('en-IN', {minimumFractionDigits: 1, maximumFractionDigits: 1})} Cr`;
+          const elStockName = document.getElementById('jasoosLargestDealStock');
+          if (elStockName && data.all_15_stocks && data.all_15_stocks.length > 0) {
+            elStockName.innerText = `${data.all_15_stocks[0].name} (${data.all_15_stocks[0].raw_symbol || data.all_15_stocks[0].symbol})`;
+          }
+        }
+        if (data.surveillance_window) {
+          const elWin = document.getElementById('jasoosWindowText');
+          if (elWin) elWin.innerText = data.surveillance_window;
+        }
+        if (data.top_stock_picks && data.top_stock_picks.length > 0) {
+          const top = data.top_stock_picks[0];
+          const elStock = document.getElementById('statJasoosTopStock');
+          const elScore = document.getElementById('statJasoosTopScore');
+          if (elStock) elStock.innerText = top.name || top.symbol || '--';
+          if (elScore) elScore.innerText = `${top.jasoos_score}/100`;
+        }
+        showToast('Top 15 Block Deals from previous 10 days refreshed!');
+      } catch (e) {
+        console.error('refreshJasoos error:', e);
+        showToast('Error refreshing Jasoos: ' + (e.message || e), false);
+      } finally {
+        setBtnLoading(btn, false);
+      }
+    }
+
+    async function refreshExplorer(btn) {
+      setBtnLoading(btn, true);
+      try {
+        const res = await fetch('/api/agent/explorer?refresh=true');
+        if (!res.ok) throw new Error(`HTTP ${res.status}: ${await res.text()}`);
+        const data = await res.json();
+        populateExplorerAll(data);
+        showToast('Explorer global macro, broker consensus, Graham valuations & bond yields refreshed!');
+      } catch (e) {
+        console.error('refreshExplorer error:', e);
+        showToast('Error refreshing Explorer: ' + (e.message || e), false);
+      } finally {
+        setBtnLoading(btn, false);
+      }
+    }
+
+    async function triggerGrihaEODUpdate(btn) {
+      setBtnLoading(btn, true);
+      try {
+        const res = await fetch('/api/agent/grihalaxmi/update-eod', { method: 'POST' });
+        if (!res.ok) throw new Error(`HTTP ${res.status}: ${await res.text()}`);
+        await res.json();
+        showToast('EOD NII data successfully synced to SQLite Database!');
+        await refreshGrihalaxmi(btn);
+      } catch (e) {
+        console.error('triggerGrihaEODUpdate error:', e);
+        showToast('Error syncing EOD data: ' + (e.message || e), false);
+      } finally {
+        setBtnLoading(btn, false);
+      }
+    }
+
+    async function refreshGrihalaxmi(btn) {
+      setBtnLoading(btn, true);
+      try {
+        const res = await fetch('/api/agent/grihalaxmi?refresh=true');
+        if (!res.ok) throw new Error(`HTTP ${res.status}: ${await res.text()}`);
+        const data = await res.json();
+        renderGrihaTable(data.recent_15_trading_days || data.daily_series);
+        
+        // Update GrihaLaxmi cards & stats
+        const hStats = data.historical_benchmark_stats || {};
+        const latestCr = data.today_cum_15d_nii !== undefined ? data.today_cum_15d_nii : (data.cumulative_net_cr || 0);
+        const avgCr = data.avg_15d_cum_nii !== undefined ? data.avg_15d_cum_nii : (data.fifteen_day_avg_cr || 0);
+
+        const elStatLatest = document.getElementById('statGrihaLatest');
+        const elStatAvg = document.getElementById('statGriha15DMA');
+        if (elStatLatest) elStatLatest.innerText = `Rs. ${latestCr.toLocaleString('en-IN')} Cr`;
+        if (elStatAvg) elStatAvg.innerText = `Rs. ${avgCr.toLocaleString('en-IN')} Cr`;
+
+        const elRuleBadge = document.getElementById('statGrihaRuleBadge');
+        if (elRuleBadge) {
+          const isBuy = data.is_below_15_day_avg;
+          elRuleBadge.innerText = isBuy ? 'BUY SIGNAL' : 'CAUTION';
+          elRuleBadge.className = isBuy
+            ? 'text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-medium'
+            : 'text-[10px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-medium';
+        }
+
+        const elTodayCum = document.getElementById('grihaToday15DCum');
+        const elAvgCum = document.getElementById('griha15DAvgCum');
+        const elPct = document.getElementById('grihaPercentile');
+        const elPctZone = document.getElementById('grihaPercentileZone');
+        const elDays = document.getElementById('grihaTotalDays');
+
+        if (elTodayCum) elTodayCum.innerText = `Rs. ${(data.today_cum_15d_nii || 0).toLocaleString('en-IN')} Cr`;
+        if (elAvgCum) elAvgCum.innerText = `Rs. ${(data.avg_15d_cum_nii || 0).toLocaleString('en-IN')} Cr`;
+        if (elPct) elPct.innerText = `${hStats.today_percentile_rank || 0}%`;
+        if (elPctZone) elPctZone.innerText = (hStats.today_percentile_rank < 30) ? 'Prime Accumulation Dip' : 'Elevated Flow';
+        if (elDays) elDays.innerText = `${hStats.total_trading_days || 930} Days`;
+        
+        const elMin = document.getElementById('histMin');
+        const elP25 = document.getElementById('histP25');
+        const elMed = document.getElementById('histMedian');
+        const elP75 = document.getElementById('histP75');
+        const elMax = document.getElementById('histMax');
+        if (elMin) elMin.innerText = `Rs. ${(hStats.hist_min_15d_cum || 0).toLocaleString('en-IN')} Cr`;
+        if (elP25) elP25.innerText = `Rs. ${(hStats.hist_25th_percentile || 0).toLocaleString('en-IN')} Cr`;
+        if (elMed) elMed.innerText = `Rs. ${(hStats.hist_median_15d_cum || 0).toLocaleString('en-IN')} Cr`;
+        if (elP75) elP75.innerText = `Rs. ${(hStats.hist_75th_percentile || 0).toLocaleString('en-IN')} Cr`;
+        if (elMax) elMax.innerText = `Rs. ${(hStats.hist_max_15d_cum || 0).toLocaleString('en-IN')} Cr`;
+        
+        const elTradeDate = document.getElementById('grihaTradeDateBadge');
+        const elSpread = document.getElementById('grihaSpreadDisplay');
+        if (elTradeDate) elTradeDate.innerText = `Trade Date: ${data.trade_date || 'Today'}`;
+        if (elSpread) elSpread.innerText = `Spread vs 15-DMA: Rs. ${(data.diff_from_avg || 0).toLocaleString('en-IN')} Cr (${data.spread_pct}%)`;
+
+        const evalBox = document.getElementById('grihaRuleEvalBox');
+        if (evalBox) {
+          evalBox.innerHTML = `Condition Result: Today Cum. NII (${(data.today_cum_15d_nii || 0).toLocaleString('en-IN')}) &lt; 15D Avg (${(data.avg_15d_cum_nii || 0).toLocaleString('en-IN')}) &rarr; <span class="${data.is_below_15_day_avg ? 'text-emerald-400 font-bold' : 'text-amber-400 font-bold'}">${data.is_below_15_day_avg ? 'TRUE &bull; RECOMMEND INVESTING IN STOCK MARKET' : 'FALSE &bull; CAUTION / HOLD'}</span>`;
+        }
+
+        showToast('GrihaLaxmi NII metrics refreshed!');
+      } catch (e) {
+        console.error('refreshGrihalaxmi error:', e);
+        showToast('Error refreshing GrihaLaxmi: ' + (e.message || e), false);
+      } finally {
+        setBtnLoading(btn, false);
+      }
+    }
+
+    async function refreshSafety(btn) {
+      setBtnLoading(btn, true);
+      try {
+        const res = await fetch('/api/agent/safetypriya?refresh=true');
+        if (!res.ok) throw new Error(`HTTP ${res.status}: ${await res.text()}`);
+        const data = await res.json();
+        if (data.top_picks_by_category) renderSafetyGrid(data.top_picks_by_category);
+        if (data.fd_benchmarks) renderSafetyFD(data.fd_benchmarks);
+        if (data.summary) {
+          const el = document.getElementById('safetySummaryText');
+          if (el) el.innerText = data.summary;
+        }
+        if (data.top_picks_by_category && data.top_picks_by_category['Hybrid']) {
+          const elTopPick = document.getElementById('statSafetyTopPick');
+          if (elTopPick) elTopPick.innerText = data.top_picks_by_category['Hybrid'].scheme_name || '--';
+        }
+        if (data.top_fd_recommendation) {
+          const elFD = document.getElementById('statSafetyFDRate');
+          if (elFD) elFD.innerText = `${data.top_fd_recommendation.general_rate}% p.a.`;
+        }
+        showToast('SafetyPriya NAVs & FDs refreshed!');
+      } catch (e) {
+        console.error('refreshSafety error:', e);
+        showToast('Error refreshing SafetyPriya: ' + (e.message || e), false);
+      } finally {
+        setBtnLoading(btn, false);
+      }
+    }
+
+    async function refreshStockBull(btn) {
+      setBtnLoading(btn, true);
+      try {
+        const res = await fetch('/api/agent/stockbull?refresh=true');
+        if (!res.ok) throw new Error(`HTTP ${res.status}: ${await res.text()}`);
+        const data = await res.json();
+        renderStockBullTab(data);
+        showToast('StockBull 100% Equities advocacy refreshed!');
+      } catch (e) {
+        console.error('refreshStockBull error:', e);
+        showToast('Error refreshing StockBull: ' + (e.message || e), false);
+      } finally {
+        setBtnLoading(btn, false);
+      }
+    }
+
+    async function refreshMFHussain(btn) {
+      setBtnLoading(btn, true);
+      try {
+        const res = await fetch('/api/agent/mfhussain?refresh=true');
+        if (!res.ok) throw new Error(`HTTP ${res.status}: ${await res.text()}`);
+        const data = await res.json();
+        renderMFHussainTab(data);
+        showToast('MFHussain 100% Mutual Funds advocacy refreshed!');
+      } catch (e) {
+        console.error('refreshMFHussain error:', e);
+        showToast('Error refreshing MFHussain: ' + (e.message || e), false);
+      } finally {
+        setBtnLoading(btn, false);
+      }
+    }
+
+    async function refreshFDLover(btn) {
+      setBtnLoading(btn, true);
+      try {
+        const res = await fetch('/api/agent/fdlover?refresh=true');
+        if (!res.ok) throw new Error(`HTTP ${res.status}: ${await res.text()}`);
+        const data = await res.json();
+        renderFDLoverTab(data);
+        showToast('FDLover 100% Fixed Income advocacy refreshed!');
+      } catch (e) {
+        console.error('refreshFDLover error:', e);
+        showToast('Error refreshing FDLover: ' + (e.message || e), false);
+      } finally {
+        setBtnLoading(btn, false);
+      }
+    }
+
+    function renderCouncilOfAdvocates(council) {
+      if (!council) return;
+      const verdict = council.arbitration_verdict || {};
+      const sb = council.stock_bull || {};
+      const mf = council.mf_hussain || {};
+      const fd = council.fd_lover || {};
+
+      // Supreme Arbitration Ruling
+      const elRuling = document.getElementById('councilRulingText');
+      if (elRuling && verdict.buddhiman_ruling) {
+        elRuling.innerText = verdict.buddhiman_ruling;
+      }
+
+      // StockBull Mini Pitch
+      const elSbSum = document.getElementById('stockBullPitchSummary');
+      if (elSbSum && verdict.stockbull_pitch_summary) {
+        elSbSum.innerText = verdict.stockbull_pitch_summary;
+      }
+      const elSbMini = document.getElementById('stockBullMiniPicks');
+      if (elSbMini && sb.curated_picks) {
+        elSbMini.innerHTML = '';
+        sb.curated_picks.slice(0, 5).forEach(s => {
+          const item = document.createElement('div');
+          item.className = 'flex justify-between items-center text-slate-300';
+          item.innerHTML = `<span><strong>${s.symbol}</strong> (${s.name.split(' ')[0]})</span> <span class="font-mono text-emerald-400 font-bold">${s.recommended_weight_pct}%</span>`;
+          elSbMini.appendChild(item);
+        });
+      }
+
+      // MFHussain Mini Pitch
+      const elMfSum = document.getElementById('mfHussainPitchSummary');
+      if (elMfSum && verdict.mfhussain_pitch_summary) {
+        elMfSum.innerText = verdict.mfhussain_pitch_summary;
+      }
+      const elMfMini = document.getElementById('mfHussainMiniPicks');
+      if (elMfMini && mf.curated_picks) {
+        elMfMini.innerHTML = '';
+        mf.curated_picks.slice(0, 5).forEach(m => {
+          const item = document.createElement('div');
+          item.className = 'flex justify-between items-center text-slate-300';
+          const shortName = m.scheme_name.split(' - ')[0].replace(' Fund', '').replace('ICICI Prudential ', 'ICICI ').replace('JioBlackRock ', 'JioBR ');
+          item.innerHTML = `<span class="truncate max-w-[170px]" title="${m.scheme_name}"><strong>${shortName}</strong></span> <span class="font-mono text-blue-400 font-bold">${m.recommended_weight_pct}%</span>`;
+          elMfMini.appendChild(item);
+        });
+      }
+
+      // FDLover Mini Pitch
+      const elFdSum = document.getElementById('fdLoverPitchSummary');
+      if (elFdSum && verdict.fdlover_pitch_summary) {
+        elFdSum.innerText = verdict.fdlover_pitch_summary;
+      }
+      const elFdYield = document.getElementById('fdLoverBlendedYieldText');
+      if (elFdYield && fd.blended_annual_yield_pct) {
+        elFdYield.innerText = `${fd.blended_annual_yield_pct}% p.a.`;
+      }
+      const elFdMini = document.getElementById('fdLoverMiniPicks');
+      if (elFdMini && fd.curated_picks) {
+        elFdMini.innerHTML = '';
+        fd.curated_picks.slice(0, 5).forEach(f => {
+          const item = document.createElement('div');
+          item.className = 'flex justify-between items-center text-slate-300';
+          const shortIssuer = f.issuer.replace(' Ltd', '').replace(' Limited', '').replace(' (Rural Electrification Corp)', '').replace(' - Amrit Vrishti / Term Deposit', '');
+          item.innerHTML = `<span class="truncate max-w-[170px]" title="${f.issuer}"><strong>${shortIssuer}</strong> @ ${f.annual_interest_rate_pct}%</span> <span class="font-mono text-amber-400 font-bold">${f.recommended_weight_pct}%</span>`;
+          elFdMini.appendChild(item);
+        });
+      }
+    }
+
+    function renderStockBullTab(sb) {
+      if (!sb) return;
+      if (sb.mandate) {
+        const el = document.getElementById('stockBullMandate');
+        if (el) el.innerText = sb.mandate;
+      }
+      if (sb.summary) {
+        const el = document.getElementById('stockBullFullSummary');
+        if (el) el.innerText = sb.summary;
+      }
+      const argGrid = document.getElementById('stockBullArgumentsGrid');
+      if (argGrid && sb.core_arguments_for_100_percent) {
+        argGrid.innerHTML = '';
+        sb.core_arguments_for_100_percent.forEach((arg, i) => {
+          const card = document.createElement('div');
+          card.className = 'bg-slate-900 p-3 rounded-xl border border-slate-800 space-y-1.5 flex flex-col justify-between';
+          card.innerHTML = `
+            <div class="text-[10px] font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-1">
+              <span class="w-4 h-4 rounded-full bg-emerald-500/20 text-center leading-4 text-[9px]">#${i + 1}</span>
+              Equity Thesis
+            </div>
+            <p class="text-[11px] text-slate-300 leading-snug">${arg}</p>
+          `;
+          argGrid.appendChild(card);
+        });
+      }
+      const tbody = document.getElementById('stockBullPicksTable');
+      if (tbody && sb.curated_picks) {
+        tbody.innerHTML = '';
+        sb.curated_picks.forEach((s, idx) => {
+          const tr = document.createElement('tr');
+          tr.className = 'hover:bg-slate-800/50 transition-colors';
+          tr.innerHTML = `
+            <td class="py-2.5 px-3 font-mono font-bold text-slate-400">${idx + 1}</td>
+            <td class="py-2.5 px-3 font-bold text-white font-mono">${s.symbol}</td>
+            <td class="py-2.5 px-3 font-semibold text-slate-200">${s.name}</td>
+            <td class="py-2.5 px-3 text-slate-400">${s.sector}</td>
+            <td class="py-2.5 px-3 text-right font-mono font-bold text-emerald-400">${s.recommended_weight_pct}%</td>
+            <td class="py-2.5 px-3 text-right font-mono text-white">${s.entry_price_ref}</td>
+            <td class="py-2.5 px-3 text-right font-mono font-bold text-cyan-300">${s.target_upside_pct}</td>
+            <td class="py-2.5 px-3 text-slate-300 font-mono text-[11px]">${s.target_horizon}</td>
+            <td class="py-2.5 px-3"><span class="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded font-mono font-bold">${s.conviction_score}</span></td>
+            <td class="py-2.5 px-3 text-slate-300 text-[11px] leading-snug max-w-sm">${s.key_thesis}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
+    }
+
+    function renderMFHussainTab(mf) {
+      if (!mf) return;
+      if (mf.mandate) {
+        const el = document.getElementById('mfHussainMandate');
+        if (el) el.innerText = mf.mandate;
+      }
+      if (mf.summary) {
+        const el = document.getElementById('mfHussainFullSummary');
+        if (el) el.innerText = mf.summary;
+      }
+      const argGrid = document.getElementById('mfHussainArgumentsGrid');
+      if (argGrid && mf.core_arguments_for_100_percent) {
+        argGrid.innerHTML = '';
+        mf.core_arguments_for_100_percent.forEach((arg, i) => {
+          const card = document.createElement('div');
+          card.className = 'bg-slate-900 p-3 rounded-xl border border-slate-800 space-y-1.5 flex flex-col justify-between';
+          card.innerHTML = `
+            <div class="text-[10px] font-bold text-blue-400 uppercase tracking-wider flex items-center gap-1">
+              <span class="w-4 h-4 rounded-full bg-blue-500/20 text-center leading-4 text-[9px]">#${i + 1}</span>
+              Alpha Driver
+            </div>
+            <p class="text-[11px] text-slate-300 leading-snug">${arg}</p>
+          `;
+          argGrid.appendChild(card);
+        });
+      }
+      const tbody = document.getElementById('mfHussainPicksTable');
+      if (tbody && mf.curated_picks) {
+        tbody.innerHTML = '';
+        mf.curated_picks.forEach((m, idx) => {
+          const tr = document.createElement('tr');
+          tr.className = 'hover:bg-slate-800/50 transition-colors';
+          tr.innerHTML = `
+            <td class="py-2.5 px-3 font-mono font-bold text-slate-400">${idx + 1}</td>
+            <td class="py-2.5 px-3 font-semibold text-white">${m.scheme_name}</td>
+            <td class="py-2.5 px-3 font-bold text-blue-400">${m.amc}</td>
+            <td class="py-2.5 px-3 text-slate-400">${m.category}</td>
+            <td class="py-2.5 px-3 text-right font-mono font-bold text-blue-400">${m.recommended_weight_pct}%</td>
+            <td class="py-2.5 px-3 text-right font-mono text-white">${m.current_nav_ref}</td>
+            <td class="py-2.5 px-3 text-right font-mono font-bold text-emerald-400">${m.fifteen_day_return}</td>
+            <td class="py-2.5 px-3 text-right font-mono text-slate-300">${m.one_week_return}</td>
+            <td class="py-2.5 px-3"><span class="text-[10px] bg-blue-500/20 text-blue-300 px-2 py-0.5 rounded font-mono font-bold">${m.risk_profile}</span></td>
+            <td class="py-2.5 px-3 text-slate-300 text-[11px] leading-snug max-w-sm">${m.future_potential_thesis}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
+    }
+
+    function renderFDLoverTab(fd) {
+      if (!fd) return;
+      if (fd.mandate) {
+        const el = document.getElementById('fdLoverMandate');
+        if (el) el.innerText = fd.mandate;
+      }
+      if (fd.summary) {
+        const el = document.getElementById('fdLoverFullSummary');
+        if (el) el.innerText = fd.summary;
+      }
+      if (fd.blended_annual_yield_pct) {
+        const el = document.getElementById('fdLoverBlendedYieldBanner');
+        if (el) el.innerText = `Blended Annual Yield: ${fd.blended_annual_yield_pct}% p.a. (${fd.blended_senior_yield_pct}% Seniors)`;
+      }
+      const argGrid = document.getElementById('fdLoverArgumentsGrid');
+      if (argGrid && fd.core_arguments_for_100_percent) {
+        argGrid.innerHTML = '';
+        fd.core_arguments_for_100_percent.forEach((arg, i) => {
+          const card = document.createElement('div');
+          card.className = 'bg-slate-900 p-3 rounded-xl border border-slate-800 space-y-1.5 flex flex-col justify-between';
+          card.innerHTML = `
+            <div class="text-[10px] font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1">
+              <span class="w-4 h-4 rounded-full bg-amber-500/20 text-center leading-4 text-[9px]">#${i + 1}</span>
+              Preservation Pillar
+            </div>
+            <p class="text-[11px] text-slate-300 leading-snug">${arg}</p>
+          `;
+          argGrid.appendChild(card);
+        });
+      }
+      const tbody = document.getElementById('fdLoverPicksTable');
+      if (tbody && fd.curated_picks) {
+        tbody.innerHTML = '';
+        fd.curated_picks.forEach((f, idx) => {
+          const tr = document.createElement('tr');
+          tr.className = 'hover:bg-slate-800/50 transition-colors';
+          tr.innerHTML = `
+            <td class="py-2.5 px-3 font-mono font-bold text-slate-400">${idx + 1}</td>
+            <td class="py-2.5 px-3 font-semibold text-white">${f.issuer}</td>
+            <td class="py-2.5 px-3 text-slate-300">${f.instrument_type}</td>
+            <td class="py-2.5 px-3"><span class="text-[10px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded font-mono font-bold">${f.credit_rating}</span></td>
+            <td class="py-2.5 px-3 text-slate-400 font-mono text-[11px]">${f.tenure}</td>
+            <td class="py-2.5 px-3 text-right font-mono font-bold text-emerald-400">${f.annual_interest_rate_pct}%</td>
+            <td class="py-2.5 px-3 text-right font-mono font-bold text-amber-300">${f.senior_citizen_rate_pct}%</td>
+            <td class="py-2.5 px-3 text-right font-mono font-bold text-amber-400">${f.recommended_weight_pct}%</td>
+            <td class="py-2.5 px-3 text-slate-300 text-[11px] leading-snug max-w-sm">${f.safety_rationale}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
+    }
+
+    let chitragupthanLoaded = false;
+    async function loadChitragupthanTab(refresh = false) {
+      const container = document.getElementById('chitragupthanPaneContainer');
+      if (!container) return;
+      if (chitragupthanLoaded && !refresh) return;
+
+      container.innerHTML = `
+        <div class="p-8 text-center text-slate-400">
+          <i class="fa-solid fa-spinner fa-spin text-2xl text-purple-400 mb-2"></i>
+          <p class="text-xs">Chitragupthan is auditing all prediction records...</p>
+        </div>
+      `;
+
+      try {
+        const capitalInput = document.getElementById('inputCapital');
+        const cap = capitalInput ? capitalInput.value : 100000;
+        const resp = await fetch(`/api/agent/chitragupthan?refresh=${refresh}&capital=${encodeURIComponent(cap)}`);
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+        const data = await resp.json();
+        renderChitragupthanInPane(data);
+        chitragupthanLoaded = true;
+      } catch (err) {
+        console.error('loadChitragupthanTab error:', err);
+        container.innerHTML = `
+          <div class="p-6 bg-red-950/30 border border-red-500/40 rounded-xl text-center text-red-300 text-xs">
+            <i class="fa-solid fa-triangle-exclamation text-xl mb-1"></i>
+            <div>Error loading simulation: ${err.message}</div>
+          </div>
+        `;
+      }
+    }
+
+    async function refreshChitragupthanTab(btn) {
+      setBtnLoading(btn, true);
+      try {
+        await loadChitragupthanTab(true);
+        showToast('Chitragupthan simulation ledger refreshed!');
+      } catch (e) {
+        showToast('Error refreshing simulation: ' + e.message, false);
+      } finally {
+        setBtnLoading(btn, false);
+      }
+    }
+
+    function renderChitragupthanInPane(data) {
+      const container = document.getElementById('chitragupthanPaneContainer');
+      if (!container || !data || !data.prediction_simulations) return;
+
+      container.innerHTML = '';
+
+      data.prediction_simulations.forEach((pred, idx) => {
+        const card = document.createElement('div');
+        card.className = 'bg-slate-900/90 rounded-xl p-5 border border-slate-800 space-y-4';
+        const sum = pred.summary || {};
+        const totalPct = sum.total_pct_change || 0;
+
+        let html = `
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-3 border-b border-slate-800">
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="text-[10px] bg-purple-500/20 text-purple-300 font-bold px-2 py-0.5 rounded">
+                  Prediction #${idx + 1}
+                </span>
+                <h3 class="text-sm font-bold text-white">${pred.prediction_date}</h3>
+                <span class="text-[11px] text-slate-400 font-mono">(Action: ${pred.execution_monday})</span>
+              </div>
+              <div class="text-[11px] text-slate-400 mt-0.5">
+                Regime: <strong class="text-amber-300">${pred.regime}</strong> &bull; 
+                Active Horizon: <span class="text-indigo-300">${pred.elapsed_days} Days</span>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-2 text-xs font-mono">
+              <span class="text-slate-400">Chosen: <strong class="text-amber-300">Rs. ${(sum.total_fund_value_prediction_date || 0).toLocaleString('en-IN')}</strong></span>
+              <span class="text-slate-600">|</span>
+              <span class="text-slate-400">Current: <strong class="text-emerald-400">Rs. ${(sum.total_current_value || 0).toLocaleString('en-IN')}</strong></span>
+              <span class="text-slate-600">|</span>
+              <span class="px-2 py-0.5 rounded ${totalPct >= 0 ? 'bg-emerald-500/20 text-emerald-300 font-bold' : 'bg-red-500/20 text-red-300 font-bold'}">
+                ${totalPct >= 0 ? '+' : ''}${totalPct.toFixed(2)}%
+              </span>
+            </div>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr class="bg-slate-950 text-slate-400 uppercase tracking-wider text-[10px] border-b border-slate-800 font-mono">
+                  <th class="py-2.5 px-3">#</th>
+                  <th class="py-2.5 px-3">Fund / Instrument</th>
+                  <th class="py-2.5 px-3">Category</th>
+                  <th class="py-2.5 px-3 text-center">Weight</th>
+                  <th class="py-2.5 px-3 text-right text-amber-300 bg-amber-500/10 font-bold">Fund Value on Prediction Date</th>
+                  <th class="py-2.5 px-3 text-right text-emerald-400 bg-emerald-500/10 font-bold">Current Value</th>
+                  <th class="py-2.5 px-3 text-right text-indigo-300 bg-indigo-500/10 font-bold">% Change</th>
+                  <th class="py-2.5 px-3 text-center">Status</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800 text-slate-200 font-mono">
+        `;
+
+        (pred.table_rows || []).forEach((row, rIdx) => {
+          const chg = row.pct_change || 0;
+          html += `
+            <tr class="hover:bg-slate-800/40">
+              <td class="py-2 px-3 text-slate-500 font-sans">${rIdx + 1}</td>
+              <td class="py-2 px-3 font-sans">
+                <span class="font-bold text-white">${row.instrument_name}</span>
+                <span class="text-[10px] text-slate-400 block font-mono">Ref: ${row.entry_price_ref}</span>
+              </td>
+              <td class="py-2 px-3 font-sans"><span class="text-[10px] bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded">${row.asset_class}</span></td>
+              <td class="py-2 px-3 text-center">${row.weight_pct}%</td>
+              <td class="py-2 px-3 text-right font-bold text-amber-200 bg-amber-500/5">Rs. ${(row.fund_value_prediction_date || 0).toLocaleString('en-IN', {minimumFractionDigits: 2})}</td>
+              <td class="py-2 px-3 text-right font-bold text-emerald-300 bg-emerald-500/5">Rs. ${(row.current_value || 0).toLocaleString('en-IN', {minimumFractionDigits: 2})}</td>
+              <td class="py-2 px-3 text-right font-bold bg-indigo-500/5 ${chg >= 0 ? 'text-emerald-400' : 'text-red-400'}">
+                ${chg >= 0 ? '+' : ''}${chg.toFixed(2)}%
+              </td>
+              <td class="py-2 px-3 text-center font-sans"><span class="text-[10px] px-2 py-0.5 rounded ${chg >= 0 ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400'}">${row.status}</span></td>
+            </tr>
+          `;
+        });
+
+        html += `
+              </tbody>
+              <tfoot class="border-t border-slate-700 bg-slate-950/80 font-mono text-xs">
+                <tr>
+                  <td colspan="4" class="py-2.5 px-3 font-sans font-bold text-slate-300 uppercase text-right">Totals:</td>
+                  <td class="py-2.5 px-3 text-right font-black text-amber-300 bg-amber-500/15">Rs. ${(sum.total_fund_value_prediction_date || 0).toLocaleString('en-IN', {minimumFractionDigits: 2})}</td>
+                  <td class="py-2.5 px-3 text-right font-black text-emerald-400 bg-emerald-500/15">Rs. ${(sum.total_current_value || 0).toLocaleString('en-IN', {minimumFractionDigits: 2})}</td>
+                  <td class="py-2.5 px-3 text-right font-black bg-indigo-500/15 ${totalPct >= 0 ? 'text-emerald-400' : 'text-red-400'}">
+                    ${totalPct >= 0 ? '+' : ''}${totalPct.toFixed(2)}%
+                  </td>
+                  <td></td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        `;
+
+        card.innerHTML = html;
+        container.appendChild(card);
+      });
+    }
+
+    let sarathyLoaded = false;
+    async function loadSarathyTab(refresh = false) {
+      if (sarathyLoaded && !refresh) return;
+      const capitalInput = document.getElementById('inputCapital');
+      const cap = capitalInput ? capitalInput.value : 100000;
+      try {
+        const resp = await fetch(`/api/agent/sarathy?refresh=${refresh}&capital=${encodeURIComponent(cap)}`);
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+        const data = await resp.json();
+        renderSarathyInPane(data);
+        sarathyLoaded = true;
+      } catch (err) {
+        console.error('loadSarathyTab error:', err);
+        showToast('Error loading Sarathy assessment: ' + err.message, false);
+      }
+    }
+
+    async function refreshSarathyTab(btn) {
+      setBtnLoading(btn, true);
+      try {
+        await loadSarathyTab(true);
+        showToast('Sarathy audit & Monday web scout refreshed!');
+      } catch (e) {
+        showToast('Error refreshing Sarathy: ' + e.message, false);
+      } finally {
+        setBtnLoading(btn, false);
+      }
+    }
+
+    function renderSarathyInPane(data) {
+      if (!data) return;
+      const audit = data.simulation_audit_report || {};
+      const web = data.monday_web_intelligence || {};
+      const directives = data.improvement_recommendations || {};
+
+      // Mandate & Summary
+      if (data.mandate) {
+        const el = document.getElementById('sarathyMandateText');
+        if (el) el.innerText = data.mandate;
+      }
+      if (data.executive_summary) {
+        const el = document.getElementById('sarathySummaryText');
+        if (el) el.innerText = data.executive_summary;
+      }
+
+      // KPI cards
+      const avgVar = audit.average_tracking_variance_pct || 0;
+      const elVar = document.getElementById('sarathyAvgVariance');
+      if (elVar) {
+        elVar.innerText = `${avgVar >= 0 ? '+' : ''}${avgVar.toFixed(2)}%`;
+        elVar.className = `text-xl font-bold ${avgVar >= 0 ? 'text-emerald-400' : 'text-amber-400'}`;
+      }
+
+      const elPicks = document.getElementById('sarathyPicksStatus');
+      const elPicksSub = document.getElementById('sarathyPicksSub');
+      if (elPicks) elPicks.innerText = `${audit.outperforming_picks || 0} Outperforming`;
+      if (elPicksSub) elPicksSub.innerText = `${audit.lagging_picks || 0} Lagging • ${audit.on_track_picks || 0} On-Track`;
+
+      // Technicals KPI
+      const nSetup = (web.major_technical_analysis && web.major_technical_analysis.nifty_50_technical_setup) || {};
+      const elSupp = document.getElementById('sarathyNiftySupport');
+      const elRes = document.getElementById('sarathyNiftyResistance');
+      if (elSupp) elSupp.innerText = `Nifty ${nSetup.current_level || 25120}`;
+      if (elRes && nSetup.key_support_levels && nSetup.key_resistance_levels) {
+        elRes.innerText = `Supp: ${nSetup.key_support_levels[0].split(' ')[0]} / Res: ${nSetup.key_resistance_levels[0].split(' ')[0]}`;
+      }
+
+      // 1. Simulation Audit Tables
+      const auditContainer = document.getElementById('sarathyAuditTablesContainer');
+      if (auditContainer && audit.audited_predictions) {
+        auditContainer.innerHTML = '';
+        audit.audited_predictions.forEach((pred, pIdx) => {
+          const card = document.createElement('div');
+          card.className = 'bg-slate-900/90 rounded-xl p-4 border border-slate-800 space-y-3';
+          const pVar = pred.summary_variance_pct || 0;
+
+          let html = `
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-2 pb-2.5 border-b border-slate-800 text-xs">
+              <div>
+                <span class="text-[10px] font-bold bg-cyan-500/20 text-cyan-300 px-2 py-0.5 rounded">Prediction Date: ${pred.prediction_date}</span>
+                <span class="text-slate-400 ml-2">Action Monday: <strong class="text-white">${pred.execution_monday}</strong></span>
+                <span class="text-slate-400 ml-2">&bull; Regime: <strong class="text-amber-300">${pred.regime}</strong></span>
+              </div>
+              <div class="font-mono text-xs flex items-center gap-3">
+                <span class="text-slate-400">Actual: <strong class="text-emerald-400">${(pred.summary_actual_pct || 0).toFixed(2)}%</strong></span>
+                <span class="text-slate-600">|</span>
+                <span class="text-slate-400">Expected Run-Rate: <strong class="text-blue-300">${(pred.summary_expected_run_rate_pct || 0).toFixed(2)}%</strong></span>
+                <span class="text-slate-600">|</span>
+                <span class="px-2 py-0.5 rounded font-bold ${pVar >= 0 ? 'bg-emerald-500/20 text-emerald-300' : 'bg-amber-500/20 text-amber-300'}">
+                  Variance: ${pVar >= 0 ? '+' : ''}${pVar.toFixed(2)}%
+                </span>
+              </div>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs border-collapse">
+                <thead>
+                  <tr class="bg-slate-950 text-slate-400 uppercase tracking-wider text-[10px] border-b border-slate-800 font-mono">
+                    <th class="py-2 px-2.5">#</th>
+                    <th class="py-2 px-2.5">Instrument</th>
+                    <th class="py-2 px-2.5">Asset Class</th>
+                    <th class="py-2 px-2.5 text-center">Weight</th>
+                    <th class="py-2 px-2.5 text-right text-emerald-400">Actual % Change</th>
+                    <th class="py-2 px-2.5 text-right text-blue-300">Target Upside</th>
+                    <th class="py-2 px-2.5 text-right text-indigo-300">Pro-Rated Expected</th>
+                    <th class="py-2 px-2.5 text-right text-cyan-300">Variance</th>
+                    <th class="py-2 px-2.5 text-center">Status</th>
+                    <th class="py-2 px-2.5">Audit Commentary</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-800 text-slate-200 font-mono text-[11px]">
+          `;
+
+          (pred.audited_rows || []).forEach((row, rIdx) => {
+            const v = row.tracking_variance_pct || 0;
+            const isPos = v >= 0;
+            html += `
+              <tr class="hover:bg-slate-800/40">
+                <td class="py-2 px-2.5 text-slate-500 font-sans">${rIdx + 1}</td>
+                <td class="py-2 px-2.5 font-sans font-semibold text-white">${row.instrument_name}</td>
+                <td class="py-2 px-2.5 font-sans"><span class="text-[10px] bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded">${row.asset_class}</span></td>
+                <td class="py-2 px-2.5 text-center">${row.weight_pct}%</td>
+                <td class="py-2 px-2.5 text-right font-bold ${row.actual_pct_change >= 0 ? 'text-emerald-400' : 'text-rose-400'}">${row.actual_pct_change >= 0 ? '+' : ''}${(row.actual_pct_change || 0).toFixed(2)}%</td>
+                <td class="py-2 px-2.5 text-right text-blue-300">${(row.expected_target_upside_pct || 0).toFixed(1)}% p.a.</td>
+                <td class="py-2 px-2.5 text-right text-indigo-300">${(row.pro_rated_expected_return_pct || 0).toFixed(2)}%</td>
+                <td class="py-2 px-2.5 text-right font-bold ${isPos ? 'text-emerald-400' : 'text-amber-400'}">${isPos ? '+' : ''}${v.toFixed(2)}%</td>
+                <td class="py-2 px-2.5 text-center font-sans">
+                  <span class="text-[10px] px-2 py-0.5 rounded font-bold ${isPos ? 'bg-emerald-500/20 text-emerald-300' : 'bg-amber-500/20 text-amber-300'}">
+                    ${row.performance_status.split(' ')[0]}
+                  </span>
+                </td>
+                <td class="py-2 px-2.5 font-sans text-slate-300 text-[11px] leading-tight max-w-xs">${row.audit_commentary}</td>
+              </tr>
+            `;
+          });
+
+          html += `
+                </tbody>
+              </table>
+            </div>
+          `;
+          card.innerHTML = html;
+          auditContainer.appendChild(card);
+        });
+      }
+
+      // 2. Scouted Websites Cards
+      const webGrid = document.getElementById('sarathyWebsitesGrid');
+      if (webGrid && web.recommended_websites) {
+        webGrid.innerHTML = '';
+        web.recommended_websites.forEach(site => {
+          const c = document.createElement('div');
+          c.className = 'bg-slate-900/90 rounded-xl p-3.5 border border-slate-800 flex flex-col justify-between space-y-2';
+          c.innerHTML = `
+            <div>
+              <div class="flex items-center justify-between mb-1">
+                <span class="font-bold text-xs text-white">${site.website_name}</span>
+                <span class="text-[9px] bg-blue-500/20 text-blue-300 px-1.5 py-0.5 rounded font-mono font-bold">${site.recommended_target_agent}</span>
+              </div>
+              <a href="${site.url}" target="_blank" class="text-[10px] text-cyan-400 hover:underline block truncate font-mono">${site.url}</a>
+              <p class="text-[11px] text-slate-300 mt-1 leading-snug">${site.specialty}</p>
+            </div>
+            <div class="pt-2 border-t border-slate-800/80 text-[10px] text-slate-400">
+              <strong class="text-slate-300">Metrics Scouted:</strong> ${site.key_metrics_scouted}
+            </div>
+          `;
+          webGrid.appendChild(c);
+        });
+      }
+
+      // 3. Monday Market Cues
+      const cuesContainer = document.getElementById('sarathyMarketCuesContainer');
+      if (cuesContainer && web.monday_market_cues) {
+        const mc = web.monday_market_cues;
+        const oi = mc.options_oi_cluster || {};
+        cuesContainer.innerHTML = `
+          <div class="bg-slate-950 p-2.5 rounded-lg border border-slate-800 space-y-1">
+            <span class="text-slate-400 font-bold block">GIFT Nifty Indication:</span>
+            <div class="text-emerald-400 font-mono font-bold">${mc.gift_nifty_indication || '--'}</div>
+          </div>
+          <div class="bg-slate-950 p-2.5 rounded-lg border border-slate-800 space-y-1">
+            <span class="text-slate-400 font-bold block">Asian Market Opening:</span>
+            <div class="text-slate-200">${mc.asian_markets_cues || '--'}</div>
+          </div>
+          <div class="bg-slate-950 p-2.5 rounded-lg border border-slate-800 space-y-1">
+            <span class="text-slate-400 font-bold block">Options Open Interest (OI) Cluster:</span>
+            <div class="grid grid-cols-2 gap-2 text-[11px] font-mono mt-1">
+              <div>Spot: <strong class="text-white">${oi.nifty_spot || 25120}</strong></div>
+              <div>PCR Ratio: <strong class="text-cyan-400">${oi.pcr_ratio || 0.94}</strong></div>
+              <div>Max Put Support: <strong class="text-emerald-400">${oi.max_put_oi_support || 25000}</strong></div>
+              <div>Max Call Res: <strong class="text-rose-400">${oi.max_call_oi_resistance || 25280}</strong></div>
+            </div>
+            <div class="text-[11px] text-amber-300 mt-1 font-semibold">Bias: ${oi.sentiment || 'Mild Bullish'}</div>
+          </div>
+          <div class="bg-slate-950 p-2.5 rounded-lg border border-slate-800 space-y-1">
+            <span class="text-slate-400 font-bold block">FII/DII Derivatives Cue:</span>
+            <div class="text-slate-300 text-[11px]">${mc.fii_dii_derivatives_cue || '--'}</div>
+          </div>
+        `;
+      }
+
+      // 4. Major Technical Analysis
+      const techContainer = document.getElementById('sarathyTechnicalSetupContainer');
+      if (techContainer && web.major_technical_analysis) {
+        const ta = web.major_technical_analysis;
+        const ns = ta.nifty_50_technical_setup || {};
+        techContainer.innerHTML = `
+          <div class="grid grid-cols-3 gap-2 bg-slate-950 p-2.5 rounded-lg border border-slate-800 font-mono text-[11px]">
+            <div>20-DMA: <strong class="text-cyan-300">${ns.dma_20 || 25020}</strong></div>
+            <div>50-DMA: <strong class="text-blue-300">${ns.dma_50 || 24785}</strong></div>
+            <div>200-DMA: <strong class="text-purple-300">${ns.dma_200 || 23650}</strong></div>
+          </div>
+          <div class="bg-slate-950 p-2.5 rounded-lg border border-slate-800 space-y-1">
+            <div class="flex justify-between items-center text-xs">
+              <span class="text-slate-400">RSI(14) Momentum:</span>
+              <span class="font-mono font-bold text-emerald-400">${ns.rsi_14 || 56.4} &bull; ${ns.momentum || 'Bullish'}</span>
+            </div>
+            <div class="text-[11px] text-slate-300 mt-1">Pattern: <strong>${ns.chart_pattern || '--'}</strong></div>
+          </div>
+          <div class="bg-slate-950 p-2.5 rounded-lg border border-slate-800 space-y-1 text-[11px]">
+            <div><strong class="text-emerald-400">Key Support:</strong> ${(ns.key_support_levels || []).join(' | ')}</div>
+            <div><strong class="text-rose-400">Key Resistance:</strong> ${(ns.key_resistance_levels || []).join(' | ')}</div>
+          </div>
+          <div class="bg-slate-950 p-2.5 rounded-lg border border-slate-800 text-[11px] text-slate-300">
+            <span class="text-slate-400 font-bold block">Consensus Technical Outlook:</span>
+            ${ta.published_market_outlook || '--'}
+          </div>
+        `;
+      }
+
+      // 5. Improvement Directives
+      const dirGrid = document.getElementById('sarathyDirectivesGrid');
+      if (dirGrid && directives) {
+        dirGrid.innerHTML = '';
+        const ags = [
+          { key: 'stock_bull', name: 'StockBull (Equities)', color: 'emerald', icon: 'fa-arrow-trend-up' },
+          { key: 'mf_hussain', name: 'MFHussain (Mutual Funds)', color: 'blue', icon: 'fa-palette' },
+          { key: 'fd_lover', name: 'FDLover (Fixed Income)', color: 'amber', icon: 'fa-lock' },
+          { key: 'buddhiman', name: 'Buddhiman (Chief CIO)', color: 'purple', icon: 'fa-crown' }
+        ];
+
+        ags.forEach(a => {
+          const dir = directives[a.key] || {};
+          const card = document.createElement('div');
+          card.className = `bg-slate-900/90 rounded-xl p-4 border border-${a.color}-500/30 space-y-2.5`;
+          card.innerHTML = `
+            <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+              <span class="text-xs font-bold text-${a.color}-400 flex items-center gap-1.5">
+                <i class="fa-solid ${a.icon}"></i> ${a.name}
+              </span>
+              <span class="text-[10px] font-mono bg-slate-800 px-2 py-0.5 rounded text-slate-300">${dir.enhancement_module || 'Module Upgrade'}</span>
+            </div>
+            <p class="text-xs text-slate-200 leading-snug">${dir.directive_summary || dir.synthesis_bridge || '--'}</p>
+            <div class="bg-slate-950 p-2.5 rounded-lg border border-slate-800 text-[11px] space-y-1 text-slate-300">
+              <div class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Engineered Specifications:</div>
+              <div>${dir.actionable_rule || dir.integration_rule || '--'}</div>
+              <div class="text-slate-400 text-[10px]"><strong class="text-slate-300">Portals Hooked:</strong> ${(dir.recommended_websites_to_add || dir.data_inputs_integrated || []).join(', ')}</div>
+            </div>
+          `;
+          dirGrid.appendChild(card);
+        });
+      }
+    }
+
+    let viswakarmaLoaded = false;
+    async function loadViswakarmaTab(refresh = false) {
+      if (viswakarmaLoaded && !refresh) return;
+      try {
+        const resp = await fetch(`/api/agent/viswakarma?refresh=${refresh}`);
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+        const data = await resp.json();
+        renderViswakarmaInPane(data);
+        viswakarmaLoaded = true;
+      } catch (err) {
+        console.error('loadViswakarmaTab error:', err);
+        showToast('Error loading Viswakarma diagnostics: ' + err.message, false);
+      }
+    }
+
+    async function refreshViswakarmaTab(btn) {
+      setBtnLoading(btn, true);
+      try {
+        await loadViswakarmaTab(true);
+        showToast('Viswakarma engineering registry refreshed!');
+      } catch (e) {
+        showToast('Error refreshing Viswakarma: ' + e.message, false);
+      } finally {
+        setBtnLoading(btn, false);
+      }
+    }
+
+    function renderViswakarmaInPane(data) {
+      if (!data) return;
+      const reg = data.registry || {};
+      const patches = reg.active_patches || {};
+      const cycle = reg.target_cycle || {};
+
+      if (data.mandate) {
+        const el = document.getElementById('viswakarmaMandateText');
+        if (el) el.innerText = data.mandate;
+      }
+      if (reg.version) {
+        const el = document.getElementById('viswakarmaVersion');
+        if (el) el.innerText = reg.version;
+      }
+      if (data.status) {
+        const el = document.getElementById('viswakarmaStatus');
+        if (el) el.innerText = data.status;
+      }
+      if (cycle.next_friday_recommendation) {
+        const el = document.getElementById('viswakarmaNextFriday');
+        if (el) el.innerText = cycle.next_friday_recommendation.split(' (')[0];
+      }
+      if (cycle.upcoming_monday_implementation) {
+        const el = document.getElementById('viswakarmaMondayImpl');
+        if (el) el.innerText = cycle.upcoming_monday_implementation;
+      }
+
+      // 4 Active Patches Grid
+      const pGrid = document.getElementById('viswakarmaPatchesGrid');
+      if (pGrid) {
+        pGrid.innerHTML = '';
+        const agentConfigs = [
+          { name: 'StockBull', label: 'StockBull (Equities)', color: 'emerald', icon: 'fa-arrow-trend-up' },
+          { name: 'MFHussain', label: 'MFHussain (Mutual Funds)', color: 'blue', icon: 'fa-palette' },
+          { name: 'FDLover', label: 'FDLover (Fixed Income)', color: 'amber', icon: 'fa-lock' },
+          { name: 'Buddhiman', label: 'Buddhiman (Chief CIO)', color: 'purple', icon: 'fa-crown' }
+        ];
+
+        agentConfigs.forEach(ac => {
+          const patch = patches[ac.name] || {};
+          const card = document.createElement('div');
+          card.className = `agent-card rounded-xl p-4 border border-${ac.color}-500/30 bg-slate-900/90 space-y-3`;
+          
+          let detailsHtml = '';
+          for (const [k, v] of Object.entries(patch)) {
+            if (['enhancement_module', 'description', 'deployed_by'].includes(k)) continue;
+            detailsHtml += `<div class="flex justify-between items-center text-[11px]"><span class="text-slate-400 capitalize">${k.replace(/_/g, ' ')}:</span> <span class="font-mono text-emerald-400 font-bold">${v}</span></div>`;
+          }
+
+          card.innerHTML = `
+            <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+              <span class="text-xs font-bold text-${ac.color}-400 flex items-center gap-1.5">
+                <i class="fa-solid ${ac.icon}"></i> ${ac.label}
+              </span>
+              <span class="text-[10px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono font-bold">DEPLOYED</span>
+            </div>
+            <div>
+              <div class="text-xs font-mono font-bold text-white">${patch.enhancement_module || 'Module'}</div>
+              <p class="text-[11px] text-slate-300 mt-1 leading-snug">${patch.description || '--'}</p>
+            </div>
+            <div class="bg-slate-950 p-2.5 rounded-lg border border-slate-800 space-y-1">
+              ${detailsHtml}
+            </div>
+            <div class="pt-2 border-t border-slate-800 text-[10px] text-slate-500 flex justify-between">
+              <span>Deployed by: <strong class="text-slate-400">${patch.deployed_by || 'Viswakarma'}</strong></span>
+              <span class="text-emerald-400"><i class="fa-solid fa-circle-check"></i> Certified Active</span>
+            </div>
+          `;
+          pGrid.appendChild(card);
+        });
+      }
+
+      // Ledger Table
+      const lTable = document.getElementById('viswakarmaLedgerTable');
+      if (lTable) {
+        lTable.innerHTML = '';
+        const history = reg.delegation_history || [];
+        if (history.length === 0) {
+          const defaults = [
+            { id: 'WO-20261012-001', agent: 'StockBull', mod: 'StockBull_v2_MomentumDeliveryFilter', source: 'TradingView & Trendlyne', status: 'DEPLOYED', cycle: 'Friday, 16 Oct 2026' },
+            { id: 'WO-20261012-002', agent: 'MFHussain', mod: 'MFHussain_v2_SharpeOverlapFilter', source: 'Value Research & Morningstar', status: 'DEPLOYED', cycle: 'Friday, 16 Oct 2026' },
+            { id: 'WO-20261012-003', agent: 'FDLover', mod: 'FDLover_v2_CrisilSpreadSentinel', source: 'CRISIL Debt & NSE Bonds', status: 'DEPLOYED', cycle: 'Friday, 16 Oct 2026' },
+            { id: 'WO-20261012-004', agent: 'Buddhiman', mod: 'Buddhiman_v2_SarathyFeedbackLoop', source: 'Livemint & Options OI Cluster', status: 'DEPLOYED', cycle: 'Friday, 16 Oct 2026' }
+          ];
+          defaults.forEach(d => {
+            const tr = document.createElement('tr');
+            tr.className = 'hover:bg-slate-800/40';
+            tr.innerHTML = `
+              <td class="py-2 px-3 text-cyan-400 font-bold">${d.id}</td>
+              <td class="py-2 px-3 font-semibold text-white font-sans">${d.agent}</td>
+              <td class="py-2 px-3 text-amber-300">${d.mod}</td>
+              <td class="py-2 px-3 text-slate-300 font-sans">${d.source}</td>
+              <td class="py-2 px-3 text-center"><span class="text-[10px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold">${d.status}</span></td>
+              <td class="py-2 px-3 text-slate-300">${d.cycle}</td>
+            `;
+            lTable.appendChild(tr);
+          });
+        } else {
+          history.forEach(h => {
+            const tr = document.createElement('tr');
+            tr.className = 'hover:bg-slate-800/40';
+            tr.innerHTML = `
+              <td class="py-2 px-3 text-cyan-400 font-bold">${h.work_order_id || '--'}</td>
+              <td class="py-2 px-3 font-semibold text-white font-sans">Council of 4</td>
+              <td class="py-2 px-3 text-amber-300">4 Architecture Modules</td>
+              <td class="py-2 px-3 text-slate-300 font-sans">5 Scouted Portals</td>
+              <td class="py-2 px-3 text-center"><span class="text-[10px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold">${h.status || 'DEPLOYED'}</span></td>
+              <td class="py-2 px-3 text-slate-300">${h.target_friday_cycle || 'Friday, 16 Oct 2026'}</td>
+            `;
+            lTable.appendChild(tr);
+          });
+        }
+      }
+    }
+
+    function downloadDossier() {
+      window.location.href = '/api/download-dossier';
+    }
+
+    function renderAll(data) {
+      if (!data) return;
+
+      // Dates & Regime
+      document.getElementById('dateFriday').innerText = data.dates.friday_recommendation_date;
+      document.getElementById('dateMonday').innerText = data.dates.upcoming_monday_action_date;
+      document.getElementById('regimeBadge').innerText = data.regime;
+      document.getElementById('execSummaryText').innerText = data.executive_summary;
+
+      // Top Stats
+      const exp = data.agent_audit_trail.explorer;
+      document.getElementById('statExplorerScore').innerText = `${exp.global_score}/100`;
+      document.getElementById('statExplorerBiasBadge').innerText = exp.bias;
+      document.getElementById('statNiftyBias').innerText = exp.nifty_impact;
+
+      const griha = data.agent_audit_trail.grihalaxmi;
+      document.getElementById('statGrihaLatest').innerText = `Rs. ${data.full_reports.grihalaxmi.latest_flow_cr.toLocaleString('en-IN')} Cr`;
+      document.getElementById('statGriha15DMA').innerText = `Rs. ${griha.avg_15d.toLocaleString('en-IN')} Cr`;
+      document.getElementById('statGrihaRuleBadge').innerText = griha.rule_triggered ? 'BUY SIGNAL' : 'CAUTION';
+      document.getElementById('statGrihaRuleBadge').className = griha.rule_triggered 
+        ? 'text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-medium'
+        : 'text-[10px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-medium';
+
+      const jasoos = data.full_reports.jasoos;
+      document.getElementById('statJasoosTopStock').innerText = jasoos.top_stock_picks[0]?.name || '--';
+      document.getElementById('statJasoosTopScore').innerText = `${jasoos.top_stock_picks[0]?.jasoos_score}/100`;
+
+      const safety = data.full_reports.safetypriya;
+      document.getElementById('statSafetyTopPick').innerText = safety.top_picks_by_category['Hybrid']?.scheme_name || '--';
+      document.getElementById('statSafetyFDRate').innerText = `${safety.top_fd_recommendation.general_rate}% p.a.`;
+
+      // Allocations
+      document.getElementById('allocStocks').innerText = `${data.allocation_percentages.Stocks}%`;
+      document.getElementById('allocMFs').innerText = `${data.allocation_percentages.Mutual_Funds}%`;
+      document.getElementById('allocETFs').innerText = `${data.allocation_percentages.ETFs}%`;
+      document.getElementById('allocFDs').innerText = `${data.allocation_percentages.Fixed_Deposits}%`;
+
+      // 5 Picks
+      renderFivePicks(data.five_actionable_picks);
+
+      // Jasoos Table & Block Deal Metrics
+      renderJasoosTable(jasoos.all_15_stocks);
+      document.getElementById('jasoosSummaryText').innerText = jasoos.summary;
+      if (jasoos.total_block_deals_scanned) {
+        document.getElementById('jasoosTotalDeals').innerText = `${jasoos.total_block_deals_scanned} Deals`;
+      }
+      if (jasoos.total_market_block_value_cr) {
+        document.getElementById('jasoosMarketBlockVal').innerText = `Rs. ${jasoos.total_market_block_value_cr.toLocaleString('en-IN', {minimumFractionDigits: 1, maximumFractionDigits: 1})} Cr`;
+      }
+      if (jasoos.top_15_deal_value_cr) {
+        document.getElementById('jasoosTop15Val').innerText = `Rs. ${jasoos.top_15_deal_value_cr.toLocaleString('en-IN', {minimumFractionDigits: 1, maximumFractionDigits: 1})} Cr`;
+      }
+      if (jasoos.largest_single_deal_cr) {
+        document.getElementById('jasoosLargestDeal').innerText = `Rs. ${jasoos.largest_single_deal_cr.toLocaleString('en-IN', {minimumFractionDigits: 1, maximumFractionDigits: 1})} Cr`;
+        const elStockName = document.getElementById('jasoosLargestDealStock');
+        if (elStockName && jasoos.all_15_stocks && jasoos.all_15_stocks.length > 0) {
+          elStockName.innerText = `${jasoos.all_15_stocks[0].name} (${jasoos.all_15_stocks[0].raw_symbol || jasoos.all_15_stocks[0].symbol})`;
+        }
+      }
+      if (jasoos.surveillance_window) {
+        const elWin = document.getElementById('jasoosWindowText');
+        if (elWin) elWin.innerText = jasoos.surveillance_window;
+      }
+
+      // Explorer Analytics & Tables
+      populateExplorerAll(data.full_reports.explorer);
+
+      // GrihaLaxmi Table & Series
+      const grihaFull = data.full_reports.grihalaxmi;
+      const hStats = grihaFull.historical_benchmark_stats || {};
+      
+      document.getElementById('statGrihaLatest').innerText = `Rs. ${grihaFull.today_cum_15d_nii ? grihaFull.today_cum_15d_nii.toLocaleString('en-IN') : grihaFull.cumulative_net_cr.toLocaleString('en-IN')} Cr`;
+      document.getElementById('statGriha15DMA').innerText = `Rs. ${grihaFull.avg_15d_cum_nii ? grihaFull.avg_15d_cum_nii.toLocaleString('en-IN') : grihaFull.fifteen_day_avg_cr.toLocaleString('en-IN')} Cr`;
+
+      document.getElementById('grihaToday15DCum').innerText = `Rs. ${(grihaFull.today_cum_15d_nii || 0).toLocaleString('en-IN')} Cr`;
+      document.getElementById('griha15DAvgCum').innerText = `Rs. ${(grihaFull.avg_15d_cum_nii || 0).toLocaleString('en-IN')} Cr`;
+      document.getElementById('grihaPercentile').innerText = `${hStats.today_percentile_rank || 0}%`;
+      document.getElementById('grihaPercentileZone').innerText = (hStats.today_percentile_rank < 30) ? 'Prime Accumulation Dip' : 'Elevated Flow';
+      document.getElementById('grihaTotalDays').innerText = `${hStats.total_trading_days || 930} Days`;
+      
+      document.getElementById('histMin').innerText = `Rs. ${(hStats.hist_min_15d_cum || 0).toLocaleString('en-IN')} Cr`;
+      document.getElementById('histP25').innerText = `Rs. ${(hStats.hist_25th_percentile || 0).toLocaleString('en-IN')} Cr`;
+      document.getElementById('histMedian').innerText = `Rs. ${(hStats.hist_median_15d_cum || 0).toLocaleString('en-IN')} Cr`;
+      document.getElementById('histP75').innerText = `Rs. ${(hStats.hist_75th_percentile || 0).toLocaleString('en-IN')} Cr`;
+      document.getElementById('histMax').innerText = `Rs. ${(hStats.hist_max_15d_cum || 0).toLocaleString('en-IN')} Cr`;
+      
+      document.getElementById('grihaTradeDateBadge').innerText = `Trade Date: ${grihaFull.trade_date || 'Today'}`;
+      document.getElementById('grihaSpreadDisplay').innerText = `Spread vs 15-DMA: Rs. ${(grihaFull.diff_from_avg || 0).toLocaleString('en-IN')} Cr (${grihaFull.spread_pct}%)`;
+
+      const evalBox = document.getElementById('grihaRuleEvalBox');
+      evalBox.innerHTML = `Condition Result: Today Cum. NII (${(grihaFull.today_cum_15d_nii || 0).toLocaleString('en-IN')}) &lt; 15D Avg (${(grihaFull.avg_15d_cum_nii || 0).toLocaleString('en-IN')}) &rarr; <span class="${grihaFull.is_below_15_day_avg ? 'text-emerald-400 font-bold' : 'text-amber-400 font-bold'}">${grihaFull.is_below_15_day_avg ? 'TRUE &bull; RECOMMEND INVESTING IN STOCK MARKET' : 'FALSE &bull; CAUTION / HOLD'}</span>`;
+      renderGrihaTable(grihaFull.recent_15_trading_days || grihaFull.daily_series);
+
+      // SafetyPriya Cards & FD Table
+      renderSafetyGrid(safety.top_picks_by_category);
+      renderSafetyFD(safety.fd_benchmarks);
+      document.getElementById('safetySummaryText').innerText = safety.summary;
+
+      // Buddhiman's Council of 3 Advocates
+      if (data.council_of_advocates) {
+        renderCouncilOfAdvocates(data.council_of_advocates);
+        if (data.council_of_advocates.stock_bull) renderStockBullTab(data.council_of_advocates.stock_bull);
+        if (data.council_of_advocates.mf_hussain) renderMFHussainTab(data.council_of_advocates.mf_hussain);
+        if (data.council_of_advocates.fd_lover) renderFDLoverTab(data.council_of_advocates.fd_lover);
+      }
+    }
+
+    function renderFivePicks(picks) {
+      const container = document.getElementById('fivePicksContainer');
+      container.innerHTML = '';
+      picks.forEach((p, idx) => {
+        let typeBadgeColor = 'bg-blue-500/20 text-blue-400 border-blue-500/30';
+        if (p.type.includes('Mutual Fund')) typeBadgeColor = 'bg-purple-500/20 text-purple-400 border-purple-500/30';
+        if (p.type.includes('Fixed Deposit')) typeBadgeColor = 'bg-amber-500/20 text-amber-400 border-amber-500/30';
+        if (p.type.includes('ETF')) typeBadgeColor = 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30';
+
+        const amountFormatted = p.allocated_rupees ? `Rs. ${p.allocated_rupees.toLocaleString('en-IN')}` : 'Calculating...';
+        const unitsFormatted = p.estimated_units !== undefined && p.estimated_units !== null 
+          ? `<div class="text-[11px] font-bold text-amber-300 mt-1"><i class="fa-solid fa-cart-shopping"></i> Buy: ${p.estimated_units.toLocaleString('en-IN')} ${p.unit_type}</div>` 
+          : (p.type.includes('Fixed Deposit') ? '<div class="text-[11px] text-amber-300 mt-1"><i class="fa-solid fa-lock"></i> Term Lock (FD)</div>' : '');
+
+        const card = document.createElement('div');
+        card.className = 'agent-card rounded-xl p-4 flex flex-col justify-between relative overflow-hidden';
+        card.innerHTML = `
+          <div class="space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded-full border ${typeBadgeColor}">#${idx + 1} &bull; ${p.type}</span>
+              <span class="text-xs font-bold text-white bg-slate-800 px-2 py-0.5 rounded">${p.recommended_weight_pct}%</span>
+            </div>
+            <h4 class="font-bold text-sm text-white line-clamp-2">${p.name}</h4>
+            <div class="text-[11px] text-slate-400">${p.sector}</div>
+            
+            <!-- Rupee Allocation & Unit Box -->
+            <div class="bg-slate-950 p-2.5 rounded-lg border border-slate-800 space-y-0.5">
+              <div class="flex justify-between items-center text-xs">
+                <span class="text-slate-400">Rupee Target:</span>
+                <span class="font-mono font-bold text-emerald-400">${amountFormatted}</span>
+              </div>
+              <div class="text-[10px] text-slate-400 flex justify-between">
+                <span>Ref Quote:</span>
+                <span class="font-mono text-slate-300">${p.entry_price_ref}</span>
+              </div>
+              ${unitsFormatted}
+            </div>
+
+            <p class="text-[11px] text-slate-300 leading-snug line-clamp-3">${p.key_driver}</p>
+          </div>
+          <div class="mt-3 pt-3 border-t border-slate-800/80 text-[11px]">
+            <span class="text-blue-400 font-semibold block mb-0.5"><i class="fa-regular fa-clock"></i> Monday Directive:</span>
+            <span class="text-slate-300">${p.action}</span>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function renderJasoosTable(stocks) {
+      const tbody = document.getElementById('jasoosStocksTable');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+      if (!stocks || !Array.isArray(stocks)) return;
+      stocks.forEach((s, i) => {
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-800/50 transition-colors border-b border-slate-800/60';
+        const isPos = (s.week_ret_pct || 0) >= 0;
+        const dealVal = s.deal_value_cr ? `Rs. ${s.deal_value_cr.toLocaleString('en-IN', {minimumFractionDigits: 1, maximumFractionDigits: 1})} Cr` : '--';
+        const dealType = (s.deal_type || 'BUY').toUpperCase();
+        const isBuy = dealType.includes('BUY');
+        const qtyStr = s.quantity ? `${s.quantity.toLocaleString('en-IN')} shs` : '';
+        const tradePx = s.trade_price ? `@ Rs. ${s.trade_price.toLocaleString('en-IN')}` : '';
+
+        tr.innerHTML = `
+          <td class="py-2.5 px-3 font-mono text-slate-400 font-bold">${i + 1}</td>
+          <td class="py-2.5 px-3 whitespace-nowrap">
+            <span class="text-[10px] font-mono font-medium text-cyan-300 bg-cyan-950/60 px-1.5 py-0.5 rounded border border-cyan-800/50">${s.trade_date || 'Recent'}</span>
+            <div class="text-[9px] text-slate-400 font-mono mt-0.5">${s.days_ago || ''}</div>
+          </td>
+          <td class="py-2.5 px-3">
+            <div class="font-bold text-white flex items-center gap-1.5">
+              <span>${s.raw_symbol || s.symbol}</span>
+              <span class="text-[9px] bg-slate-800 text-slate-400 px-1.5 py-0.5 rounded font-mono">NSE</span>
+            </div>
+          </td>
+          <td class="py-2.5 px-3">
+            <div class="text-slate-200 font-medium">${s.name}</div>
+            <div class="text-[10px] text-slate-400">${s.sector || 'Equities'}</div>
+          </td>
+          <td class="py-2.5 px-3 text-right font-mono font-bold text-amber-300">
+            ${dealVal}
+          </td>
+          <td class="py-2.5 px-3">
+            <span class="${isBuy ? 'bg-emerald-500/20 text-emerald-300' : 'bg-rose-500/20 text-rose-300'} px-2 py-0.5 rounded text-[10px] font-bold">
+              ${dealType}
+            </span>
+            <div class="text-[10px] text-slate-400 font-mono mt-0.5">${qtyStr} ${tradePx}</div>
+          </td>
+          <td class="py-2.5 px-3 text-[11px] text-slate-300 max-w-xs truncate" title="${s.client_name || ''}">
+            ${s.client_name || 'Institutional Allocator'}
+          </td>
+          <td class="py-2.5 px-3 font-mono text-white">Rs. ${(s.current_price || 0).toLocaleString('en-IN')}</td>
+          <td class="py-2.5 px-3 font-mono ${isPos ? 'text-emerald-400' : 'text-rose-400'}">
+            ${isPos ? '+' : ''}${s.week_ret_pct || 0}%
+          </td>
+          <td class="py-2.5 px-3 font-mono text-slate-300">${s.vol_ratio || 1.0}x</td>
+          <td class="py-2.5 px-3 font-bold text-amber-400 font-mono">${s.jasoos_score}</td>
+          <td class="py-2.5 px-3">
+            <span class="text-[10px] font-bold px-2 py-0.5 rounded ${s.jasoos_score >= 75 ? 'bg-emerald-500/20 text-emerald-300' : (s.jasoos_score >= 50 ? 'bg-blue-500/20 text-blue-300' : 'bg-slate-800 text-slate-400')}">
+              ${s.verdict}
+            </span>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function populateExplorerAll(expData) {
+      if (!expData) return;
+      if (expData.tracked_markets) renderExplorerTable(expData.tracked_markets);
+      if (expData.indian_vs_global_15d_comparison) render15DValidation(expData.indian_vs_global_15d_comparison);
+      if (expData.broker_predictions) renderBrokerPredictions(expData.broker_predictions);
+      if (expData.graham_valuations) renderGrahamAssessment(expData.graham_valuations);
+      if (expData.interest_rates_and_bonds) renderInterestRatesAndBonds(expData.interest_rates_and_bonds);
+
+      if (expData.summary) {
+        const el = document.getElementById('explorerSummaryText');
+        if (el) el.innerText = expData.summary;
+      }
+      if (expData.nifty_projection) {
+        const elNifty = document.getElementById('expNiftyBias');
+        const elNiftyRef = document.getElementById('expNiftyRef');
+        if (elNifty) elNifty.innerText = expData.nifty_projection.expected_bias || '--';
+        if (elNiftyRef) elNiftyRef.innerText = `Quote: ${expData.nifty_projection.current || '--'}`;
+      }
+      if (expData.sensex_projection) {
+        const elSensex = document.getElementById('expSensexBias');
+        const elSensexRef = document.getElementById('expSensexRef');
+        if (elSensex) elSensex.innerText = expData.sensex_projection.expected_bias || '--';
+        if (elSensexRef) elSensexRef.innerText = `Quote: ${expData.sensex_projection.current || '--'}`;
+      }
+      const elScore = document.getElementById('expScoreDisplay');
+      const elBias = document.getElementById('expBiasDisplay');
+      if (elScore && expData.global_composite_score !== undefined) {
+        elScore.innerText = `${expData.global_composite_score}/100`;
+      }
+      if (elBias && expData.directional_bias) {
+        elBias.innerText = `Bias: ${expData.directional_bias}`;
+      }
+
+      // Top KPI stat card
+      const elGlobalScore = document.getElementById('statExplorerScore');
+      const elBiasBadge = document.getElementById('statExplorerBiasBadge');
+      const elNiftyStat = document.getElementById('statNiftyBias');
+      if (elGlobalScore && expData.global_composite_score !== undefined) {
+        elGlobalScore.innerText = `${expData.global_composite_score}/100`;
+      }
+      if (elBiasBadge && expData.directional_bias) elBiasBadge.innerText = expData.directional_bias;
+      if (elNiftyStat && expData.nifty_projection) elNiftyStat.innerText = expData.nifty_projection.expected_bias || '--';
+    }
+
+    function renderExplorerTable(indices) {
+      const tbody = document.getElementById('explorerIndicesTable');
+      if (!tbody || !indices) return;
+      tbody.innerHTML = '';
+      indices.forEach(idx => {
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-800/50 transition-colors';
+        const isDayPos = (idx.day_change_pct || 0) >= 0;
+        const isWeekPos = (idx.week_ret_pct || 0) >= 0;
+        const is15Pos = (idx.fifteen_ret_pct || 0) >= 0;
+
+        let signalClass = 'bg-slate-700 text-slate-300';
+        if (idx.signal && idx.signal.includes('BULLISH')) signalClass = 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40';
+        else if (idx.signal && idx.signal.includes('BEARISH')) signalClass = 'bg-rose-500/20 text-rose-300 border border-rose-500/40';
+        else if (idx.signal && idx.signal.includes('NEUTRAL')) signalClass = 'bg-blue-500/20 text-blue-300 border border-blue-500/40';
+
+        tr.innerHTML = `
+          <td class="py-2.5 px-3">
+            <div class="font-bold text-white">${idx.name}</div>
+            <div class="text-[10px] text-slate-500 font-mono">${idx.symbol}</div>
+          </td>
+          <td class="py-2.5 px-3">
+            <div class="text-slate-300">${idx.country}</div>
+            <div class="text-[10px] text-slate-500">${idx.region}</div>
+          </td>
+          <td class="py-2.5 px-3 font-mono text-white">${(idx.price || 0).toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+          <td class="py-2.5 px-3 text-right font-mono ${isDayPos ? 'text-emerald-400' : 'text-rose-400'}">
+            ${isDayPos ? '+' : ''}${idx.day_change_pct}%
+          </td>
+          <td class="py-2.5 px-3 text-right font-mono ${isWeekPos ? 'text-emerald-400' : 'text-rose-400'}">
+            ${isWeekPos ? '+' : ''}${idx.week_ret_pct}%
+          </td>
+          <td class="py-2.5 px-3 text-right font-mono font-bold ${is15Pos ? 'text-emerald-400' : 'text-rose-400'}">
+            ${is15Pos ? '+' : ''}${idx.fifteen_ret_pct}%
+          </td>
+          <td class="py-2.5 px-3 text-center">
+            <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-900 border border-slate-800 text-slate-300">${idx.fifteen_trend || 'Rangebound'}</span>
+          </td>
+          <td class="py-2.5 px-3 text-center font-mono text-slate-400 text-[11px]">${idx.correlation_with_nifty || 0.75}</td>
+          <td class="py-2.5 px-3 text-center">
+            <span class="text-[10px] font-bold px-2 py-0.5 rounded ${signalClass}">
+              ${idx.signal}
+            </span>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function render15DValidation(comp) {
+      if (!comp) return;
+      const elNifty = document.getElementById('expNifty15D');
+      const elSensex = document.getElementById('expSensex15D');
+      const elGlobal = document.getElementById('expGlobal15D');
+      const elSpread = document.getElementById('expDecouplingSpread');
+      const elBadge = document.getElementById('expValidationStatusBadge');
+      const elRationale = document.getElementById('expValidationRationale');
+
+      if (elNifty) elNifty.innerText = `${(comp.nifty_15d_return_pct || 0) >= 0 ? '+' : ''}${comp.nifty_15d_return_pct || 0}%`;
+      if (elSensex) elSensex.innerText = `${(comp.sensex_15d_return_pct || 0) >= 0 ? '+' : ''}${comp.sensex_15d_return_pct || 0}%`;
+      if (elGlobal) elGlobal.innerText = `${(comp.global_9_indices_weighted_15d_return_pct || 0) >= 0 ? '+' : ''}${comp.global_9_indices_weighted_15d_return_pct || 0}%`;
+      if (elSpread) elSpread.innerText = `${(comp.decoupling_spread_pct || 0) >= 0 ? '+' : ''}${comp.decoupling_spread_pct || 0}%`;
+      if (elBadge) {
+        elBadge.innerText = comp.validation_status || 'Validation Status';
+        elBadge.className = comp.prediction_holds 
+          ? 'text-[10px] font-bold px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+          : 'text-[10px] font-bold px-2.5 py-1 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/30';
+      }
+      if (elRationale) elRationale.innerText = comp.validation_rationale || '';
+    }
+
+    function renderBrokerPredictions(brokers) {
+      if (!brokers) return;
+      const tbody = document.getElementById('brokersPredictionsTable');
+      if (tbody) {
+        tbody.innerHTML = '';
+        (brokers.brokers || []).forEach(b => {
+          const tr = document.createElement('tr');
+          tr.className = 'hover:bg-slate-800/50 transition-colors';
+          let stanceClass = 'bg-slate-800 text-slate-300';
+          if (b.stance.includes('Bullish') || b.stance.includes('Overweight')) stanceClass = 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40';
+          else if (b.stance.includes('Accumulate')) stanceClass = 'bg-blue-500/20 text-blue-300 border border-blue-500/40';
+          else if (b.stance.includes('Neutral') || b.stance.includes('Hold')) stanceClass = 'bg-amber-500/20 text-amber-300 border border-amber-500/40';
+
+          tr.innerHTML = `
+            <td class="py-2.5 px-3 font-semibold text-white">${b.broker}</td>
+            <td class="py-2.5 px-3">
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded ${stanceClass}">${b.stance}</span>
+            </td>
+            <td class="py-2.5 px-3 text-slate-400 text-[11px]">${b.horizon}</td>
+            <td class="py-2.5 px-3 text-right font-mono font-bold text-emerald-400">${b.nifty_target.toLocaleString('en-IN')}</td>
+            <td class="py-2.5 px-3 text-right font-mono font-bold text-indigo-400">${b.sensex_target.toLocaleString('en-IN')}</td>
+            <td class="py-2.5 px-3 text-slate-300 text-[11px] leading-snug">${b.rationale}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
+
+      const elDir = document.getElementById('brokerConsensusDir');
+      const elNifty = document.getElementById('brokerNiftyTarget');
+      const elNiftyRange = document.getElementById('brokerNiftyRange');
+      const elSensex = document.getElementById('brokerSensexTarget');
+      const elSensexRange = document.getElementById('brokerSensexRange');
+      const elVerdict = document.getElementById('brokerAlignVerdict');
+      const elBadge = document.getElementById('brokerValidationBadge');
+      const elRationale = document.getElementById('brokerValidationRationale');
+
+      if (elDir) elDir.innerText = brokers.consensus_direction || '--';
+      if (elNifty) elNifty.innerText = brokers.consensus_nifty_target ? brokers.consensus_nifty_target.toLocaleString('en-IN') : '--';
+      if (elNiftyRange) elNiftyRange.innerText = `Bands: ${brokers.nifty_support_band?.toLocaleString('en-IN') || '--'} - ${brokers.nifty_resistance_band?.toLocaleString('en-IN') || '--'}`;
+      if (elSensex) elSensex.innerText = brokers.consensus_sensex_target ? brokers.consensus_sensex_target.toLocaleString('en-IN') : '--';
+      if (elSensexRange) elSensexRange.innerText = `Bands: ${brokers.sensex_support_band?.toLocaleString('en-IN') || '--'} - ${brokers.sensex_resistance_band?.toLocaleString('en-IN') || '--'}`;
+      if (elVerdict) elVerdict.innerText = brokers.validation_status || '--';
+      if (elBadge) {
+        elBadge.innerText = `Validation: ${brokers.validation_status || 'Assessing'}`;
+        elBadge.className = (brokers.validation_status && brokers.validation_status.includes('VALIDATED'))
+          ? 'text-[10px] font-bold px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+          : 'text-[10px] font-bold px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30';
+      }
+      if (elRationale) elRationale.innerText = brokers.validation_rationale || '';
+    }
+
+    function renderGrahamAssessment(graham) {
+      if (!graham) return;
+      cachedGrahamData = graham;
+      const ts = graham.tier_summaries || {};
+
+      const l = ts.large_cap || {};
+      const m = ts.mid_cap || {};
+      const s = ts.small_cap || {};
+
+      const elPL = document.getElementById('grahamPassLarge');
+      const elPM = document.getElementById('grahamPassMid');
+      const elPS = document.getElementById('grahamPassSmall');
+      if (elPL) elPL.innerText = `${l.graham_pass_count || 0}/10 Passes`;
+      if (elPM) elPM.innerText = `${m.graham_pass_count || 0}/10 Passes`;
+      if (elPS) elPS.innerText = `${s.graham_pass_count || 0}/10 Passes`;
+
+      const elLPE = document.getElementById('grahamLargePE');
+      const elLPB = document.getElementById('grahamLargePB');
+      const elLFrothy = document.getElementById('grahamLargeFrothy');
+      if (elLPE) elLPE.innerText = l.avg_pe || '--';
+      if (elLPB) elLPB.innerText = l.avg_pb || '--';
+      if (elLFrothy) elLFrothy.innerText = `${l.frothy_count || 0}/10`;
+
+      const elMPE = document.getElementById('grahamMidPE');
+      const elMPB = document.getElementById('grahamMidPB');
+      const elMFrothy = document.getElementById('grahamMidFrothy');
+      if (elMPE) elMPE.innerText = m.avg_pe || '--';
+      if (elMPB) elMPB.innerText = m.avg_pb || '--';
+      if (elMFrothy) elMFrothy.innerText = `${m.frothy_count || 0}/10`;
+
+      const elSPE = document.getElementById('grahamSmallPE');
+      const elSPB = document.getElementById('grahamSmallPB');
+      const elSFrothy = document.getElementById('grahamSmallFrothy');
+      if (elSPE) elSPE.innerText = s.avg_pe || '--';
+      if (elSPB) elSPB.innerText = s.avg_pb || '--';
+      if (elSFrothy) elSFrothy.innerText = `${s.frothy_count || 0}/10`;
+
+      renderGrahamTable();
+    }
+
+    function switchGrahamTier(tier) {
+      currentGrahamTier = tier;
+      const btnL = document.getElementById('btnGrahamLarge');
+      const btnM = document.getElementById('btnGrahamMid');
+      const btnS = document.getElementById('btnGrahamSmall');
+      if (btnL) btnL.className = (tier === 'large_cap') ? 'px-2.5 py-1 rounded bg-blue-600 text-white font-medium text-[11px] transition-all' : 'px-2.5 py-1 rounded text-slate-400 hover:text-white text-[11px] transition-all';
+      if (btnM) btnM.className = (tier === 'mid_cap') ? 'px-2.5 py-1 rounded bg-blue-600 text-white font-medium text-[11px] transition-all' : 'px-2.5 py-1 rounded text-slate-400 hover:text-white text-[11px] transition-all';
+      if (btnS) btnS.className = (tier === 'small_cap') ? 'px-2.5 py-1 rounded bg-blue-600 text-white font-medium text-[11px] transition-all' : 'px-2.5 py-1 rounded text-slate-400 hover:text-white text-[11px] transition-all';
+      renderGrahamTable();
+    }
+
+    function renderGrahamTable() {
+      const tbody = document.getElementById('grahamStocksTable');
+      if (!tbody || !cachedGrahamData) return;
+      tbody.innerHTML = '';
+      const stocks = cachedGrahamData[currentGrahamTier] || [];
+      stocks.forEach(s => {
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-800/50 transition-colors';
+        
+        let verdictClass = 'bg-slate-800 text-slate-300';
+        if (s.graham_verdict === 'GRAHAM PASS') verdictClass = 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40';
+        else if (s.graham_verdict === 'FAIR VALUE') verdictClass = 'bg-blue-500/20 text-blue-300 border border-blue-500/40';
+        else if (s.graham_verdict === 'ELEVATED') verdictClass = 'bg-amber-500/20 text-amber-300 border border-amber-500/40';
+        else if (s.graham_verdict === 'FROTHY') verdictClass = 'bg-rose-500/20 text-rose-300 border border-rose-500/40';
+
+        const mosPos = (s.margin_of_safety_pct || 0) >= 0;
+        const multPass = (s.graham_multiplier || 999) <= 22.5;
+
+        tr.innerHTML = `
+          <td class="py-2.5 px-3">
+            <div class="font-bold text-white">${s.symbol}</div>
+            <div class="text-[10px] text-slate-400">${s.name}</div>
+          </td>
+          <td class="py-2.5 px-3 text-slate-300">${s.sector}</td>
+          <td class="py-2.5 px-3 text-right font-mono text-white">Rs. ${(s.cmp || 0).toLocaleString('en-IN', {minimumFractionDigits: 1, maximumFractionDigits: 1})}</td>
+          <td class="py-2.5 px-3 text-right font-mono text-slate-200">${s.pe ? s.pe.toFixed(1) : 'N/A'}</td>
+          <td class="py-2.5 px-3 text-right font-mono text-slate-200">${s.pb ? s.pb.toFixed(1) : 'N/A'}</td>
+          <td class="py-2.5 px-3 text-right font-mono text-[11px] text-slate-400">
+            <div>EPS: <span class="text-slate-200 font-bold">${s.eps ? s.eps.toFixed(1) : 'N/A'}</span></div>
+            <div>BVPS: <span class="text-slate-200 font-bold">${s.bvps ? s.bvps.toFixed(1) : 'N/A'}</span></div>
+          </td>
+          <td class="py-2.5 px-3 text-right font-mono text-cyan-300 font-bold">
+            Rs. ${(s.graham_number || 0).toLocaleString('en-IN', {minimumFractionDigits: 1, maximumFractionDigits: 1})}
+          </td>
+          <td class="py-2.5 px-3 text-right font-mono ${multPass ? 'text-emerald-400 font-bold' : 'text-slate-300'}">
+            ${s.graham_multiplier ? s.graham_multiplier.toFixed(1) : 'N/A'}
+            ${multPass ? '<i class="fa-solid fa-check text-emerald-400 text-[10px] ml-1"></i>' : ''}
+          </td>
+          <td class="py-2.5 px-3 text-right font-mono font-bold ${mosPos ? 'text-emerald-400' : 'text-rose-400'}">
+            ${mosPos ? '+' : ''}${s.margin_of_safety_pct ? s.margin_of_safety_pct.toFixed(1) : 0}%
+          </td>
+          <td class="py-2.5 px-3 text-center">
+            <span class="text-[10px] font-bold px-2 py-0.5 rounded ${verdictClass}">
+              ${s.graham_verdict}
+            </span>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function renderInterestRatesAndBonds(bonds) {
+      if (!bonds) return;
+      // Central Banks Grid
+      const grid = document.getElementById('centralBanksGrid');
+      if (grid && bonds.central_banks) {
+        grid.innerHTML = '';
+        for (const [cbName, cb] of Object.entries(bonds.central_banks)) {
+          let stanceColor = 'text-blue-400';
+          if (cb.stance.includes('Easing') || cb.stance.includes('Dovish')) stanceColor = 'text-emerald-400';
+          else if (cb.stance.includes('Hike') || cb.stance.includes('Hawkish')) stanceColor = 'text-rose-400';
+
+          const card = document.createElement('div');
+          card.className = 'bg-slate-950 p-2.5 rounded-lg border border-slate-800 space-y-1';
+          card.innerHTML = `
+            <div class="text-[10px] text-slate-400 truncate font-semibold" title="${cbName}">${cbName.replace(' (RBI)', '').replace('US Federal Reserve', 'US Fed')}</div>
+            <div class="text-sm font-bold text-white font-mono">${cb.current_rate}</div>
+            <div class="text-[10px] font-bold ${stanceColor}">${cb.stance}</div>
+            <div class="text-[9px] text-slate-500 truncate" title="${cb.cycle_stage}">${cb.cycle_stage}</div>
+          `;
+          grid.appendChild(card);
+        }
+      }
+
+      // 10Y Sovereign Bond Table
+      const tbody = document.getElementById('bondYieldsTable');
+      if (tbody && bonds.bond_yields) {
+        tbody.innerHTML = '';
+        bonds.bond_yields.forEach(b => {
+          const tr = document.createElement('tr');
+          tr.className = 'hover:bg-slate-800/50 transition-colors';
+          const chgPos = (b.fifteen_day_change_bps || 0) >= 0;
+          tr.innerHTML = `
+            <td class="py-2.5 px-3 font-semibold text-white">${b.name}</td>
+            <td class="py-2.5 px-3 text-slate-400">${b.country}</td>
+            <td class="py-2.5 px-3 text-right font-mono font-bold text-amber-300">${b.current_yield_pct}%</td>
+            <td class="py-2.5 px-3 text-right font-mono ${chgPos ? 'text-rose-400' : 'text-emerald-400'}">${chgPos ? '+' : ''}${b.fifteen_day_change_bps} bps</td>
+            <td class="py-2.5 px-3 text-slate-300 text-[11px]">${b.implication_for_india}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
+
+      const elSpreadTag = document.getElementById('bondAssessmentTag');
+      const elSpreadCard = document.getElementById('expBondSpread');
+      const elSpreadNote = document.getElementById('expBondSpreadNote');
+      if (elSpreadTag) elSpreadTag.innerText = `Spread: ${bonds.us_india_spread_bps} bps (${bonds.spread_assessment || 'Normal'})`;
+      if (elSpreadCard) elSpreadCard.innerText = `${bonds.us_india_spread_bps} bps`;
+      if (elSpreadNote) elSpreadNote.innerText = bonds.spread_assessment || '10Y Sovereign Spread';
+    }
+
+    function renderGrihaTable(daily) {
+      const tbody = document.getElementById('grihaDailyTable');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+      if (!daily || !Array.isArray(daily)) return;
+      daily.forEach(d => {
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-800/50';
+        const dDate = d.trade_date || d.date || '--';
+        const dFii = d.fii_net !== undefined ? d.fii_net : 0;
+        const dDii = d.dii_net !== undefined ? d.dii_net : 0;
+        const dNet = d.daily_nii !== undefined ? d.daily_nii : (d.net_total !== undefined ? d.net_total : 0);
+        const isNetPos = dNet >= 0;
+        tr.innerHTML = `
+          <td class="py-2 px-3 text-slate-300 font-mono">${dDate}</td>
+          <td class="py-2 px-3 font-mono ${dFii >= 0 ? 'text-emerald-400' : 'text-rose-400'}">Rs. ${dFii.toLocaleString('en-IN')}</td>
+          <td class="py-2 px-3 font-mono ${dDii >= 0 ? 'text-emerald-400' : 'text-rose-400'}">Rs. ${dDii.toLocaleString('en-IN')}</td>
+          <td class="py-2 px-3 font-mono font-semibold ${isNetPos ? 'text-emerald-400' : 'text-rose-400'}">Rs. ${dNet.toLocaleString('en-IN')}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function renderSafetyGrid(cats) {
+      const container = document.getElementById('safetyPicksGrid');
+      container.innerHTML = '';
+      for (const [cat, f] of Object.entries(cats)) {
+        const el = document.createElement('div');
+        el.className = 'bg-slate-900 p-4 rounded-xl border border-slate-800 space-y-2';
+        el.innerHTML = `
+          <div class="flex items-center justify-between text-xs">
+            <span class="font-bold text-purple-400">${cat.toUpperCase()}</span>
+            <span class="text-[10px] bg-slate-800 px-2 py-0.5 rounded text-slate-400">${f.risk_profile}</span>
+          </div>
+          <h4 class="font-bold text-sm text-white line-clamp-2">${f.scheme_name}</h4>
+          <div class="text-xs text-slate-400">AMC: <span class="text-slate-200">${f.amc}</span></div>
+          <div class="flex items-center justify-between pt-2 border-t border-slate-800 text-xs font-mono">
+            <span>NAV: Rs. ${f.current_nav}</span>
+            <span class="text-emerald-400">+${f.fifteen_chg_pct}% (15D)</span>
+          </div>
+        `;
+        container.appendChild(el);
+      }
+    }
+
+    function renderSafetyFD(fds) {
+      const tbody = document.getElementById('safetyFDTable');
+      tbody.innerHTML = '';
+      fds.forEach(fd => {
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-800/50';
+        tr.innerHTML = `
+          <td class="py-2.5 px-3 font-semibold text-white">${fd.bank}</td>
+          <td class="py-2.5 px-3 text-slate-400 font-mono">${fd.tenure}</td>
+          <td class="py-2.5 px-3 text-emerald-400 font-bold font-mono">${fd.general_rate}% p.a.</td>
+          <td class="py-2.5 px-3 text-amber-400 font-mono">${fd.senior_rate}% p.a.</td>
+          <td class="py-2.5 px-3"><span class="bg-blue-500/20 text-blue-300 px-2 py-0.5 rounded text-[10px] font-bold">AAA / DICGC Sovereign</span></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Auto load on init
+    window.addEventListener('DOMContentLoaded', () => {
+      runSynthesis();
+    });
+  </script>
+</body>
+</html>
